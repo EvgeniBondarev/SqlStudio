@@ -51,6 +51,7 @@ public class MoodleController : ControllerBase
         }
         catch (Exception ex)
         {
+            
             _logger.LogError(ex, "Error fetching courses");
             return StatusCode(500, new { message = "Internal server error" });
         }
