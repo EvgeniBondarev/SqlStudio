@@ -10,3 +10,4 @@ D:\.NETProject\SlqStudio\SlqStudio.Application\obj\Debug\net9.0\SlqStudio.Applic
 D:\.NETProject\SlqStudio\SlqStudio.Application\obj\Debug\net9.0\refint\SlqStudio.Application.dll
 D:\.NETProject\SlqStudio\SlqStudio.Application\obj\Debug\net9.0\SlqStudio.Application.pdb
 D:\.NETProject\SlqStudio\SlqStudio.Application\obj\Debug\net9.0\ref\SlqStudio.Application.dll
+D:\.NETProject\SlqStudio\SlqStudio.Application\obj\Debug\net9.0\SlqStudio.Application.sourcelink.json

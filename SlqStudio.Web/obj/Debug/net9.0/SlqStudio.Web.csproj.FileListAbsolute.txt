@@ -124,3 +124,4 @@ D:\.NETProject\SlqStudio\SlqStudio.Web\bin\Debug\net9.0\Microsoft.Extensions.Pri
 D:\.NETProject\SlqStudio\SlqStudio.Web\bin\Debug\net9.0\Newtonsoft.Json.dll
 D:\.NETProject\SlqStudio\SlqStudio.Web\bin\Debug\net9.0\Polly.dll
 D:\.NETProject\SlqStudio\SlqStudio.Web\bin\Debug\net9.0\Polly.Extensions.Http.dll
+D:\.NETProject\SlqStudio\SlqStudio.Web\obj\Debug\net9.0\SlqStudio.Web.sourcelink.json

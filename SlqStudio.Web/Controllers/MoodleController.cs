@@ -7,12 +7,14 @@ namespace SlqStudio.Controllers;
 [Route("api/moodle")]
 public class MoodleController : ControllerBase
 {
-    private readonly MoodleApiClient _moodleApiClient;
+    private readonly IMoodleService _moodleService;
     private readonly ILogger<MoodleController> _logger;
 
-    public MoodleController(MoodleApiClient moodleApiClient, ILogger<MoodleController> logger)
+    public MoodleController(
+        IMoodleService moodleService,
+        ILogger<MoodleController> logger)
     {
-        _moodleApiClient = moodleApiClient;
+        _moodleService = moodleService;
         _logger = logger;
     }
 
@@ -21,15 +23,7 @@ public class MoodleController : ControllerBase
     {
         try
         {
-            var parameters = new Dictionary<string, string>
-            {
-                { "userlist[0][userid]", userId.ToString() },
-                { "userlist[0][courseid]", courseId.ToString() }
-            };
-
-            var response = await _moodleApiClient.SendRequestAsync<MoodleUserProfileResponse>(
-                "core_user_get_course_user_profiles", parameters);
-
+            var response = await _moodleService.GetUserProfileAsync(userId, courseId);
             return Ok(response);
         }
         catch (Exception ex)
@@ -44,18 +38,28 @@ public class MoodleController : ControllerBase
     {
         try
         {
-            var parameters = new Dictionary<string, string>();
-            var response = await _moodleApiClient.SendRequestAsync<MoodleCourseResponse>(
-                "core_course_get_courses", parameters);
+            var response = await _moodleService.GetAllCoursesAsync();
             return Ok(response);
         }
         catch (Exception ex)
         {
-            
             _logger.LogError(ex, "Error fetching courses");
             return StatusCode(500, new { message = "Internal server error" });
         }
     }
 
-
+    [HttpGet("user-by-email")]
+    public async Task<IActionResult> GetUserByEmail([FromQuery] string email)
+    {
+        try
+        {
+            var response = await _moodleService.GetUserByEmailAsync(email);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching user by email");
+            return StatusCode(500, new { message = "Internal server error" });
+        }
+    }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
+using SlqStudio.Application.ApiClients.Moodle.Models;
 
 namespace SlqStudio.Application.ApiClients.Moodle;
 
@@ -42,57 +43,4 @@ public class MoodleApiClient
         string jsonResponse = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<List<TResponse>>(jsonResponse);
     }
-}
-
-public class MoodleCourseResponse
-{
-    public int Id { get; set; }
-    public string Shortname { get; set; }
-    public int CategoryId { get; set; }
-    public string Fullname { get; set; }
-    public string Displayname { get; set; }
-    public string Summary { get; set; }
-    public int StartDate { get; set; }
-    public int EndDate { get; set; }
-    public int Visible { get; set; }
-}
-
-
-public class MoodleApiSettings
-{
-    public string MoodleUrl { get; set; } = string.Empty;
-    public string Token { get; set; } = string.Empty;
-}
-
-public class MoodleUserProfileRequest
-{
-    public int UserId { get; set; }
-    public int CourseId { get; set; }
-}
-
-public class MoodleUserProfileResponse
-{
-    public int Id { get; set; }
-    public string Username { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string FullName { get; set; }
-    public string Email { get; set; }
-    public string ProfileImageUrl { get; set; }
-    public List<MoodleUserRole> Roles { get; set; } = new List<MoodleUserRole>();
-    public List<MoodleUserCourse> EnrolledCourses { get; set; } = new List<MoodleUserCourse>();
-}
-
-public class MoodleUserRole
-{
-    public int RoleId { get; set; }
-    public string ShortName { get; set; }
-    public string Name { get; set; }
-}
-
-public class MoodleUserCourse
-{
-    public int Id { get; set; }
-    public string FullName { get; set; }
-    public string ShortName { get; set; }
 }

@@ -1,6 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    var userEmail = Context.Session.GetString("UserEmail");
+    var userRole = Context.Session.GetString("UserRole");
 }
+
+<div>
+    <p>Email пользователя: @userEmail</p>
+    <p>Роль пользователя: @userRole</p>
+</div>
+
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>

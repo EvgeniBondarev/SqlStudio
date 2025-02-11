@@ -17,7 +17,7 @@ public class JwtTokenService : IJwtTokenService
         _jwtSettings = jwtSettings;
     }
 
-    public string GenerateJwtToken(string email)
+    public string GenerateJwtToken(string email, string role)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -25,6 +25,7 @@ public class JwtTokenService : IJwtTokenService
         var claims = new[]
         {
             new Claim(ClaimTypes.Email, email),
+            new Claim(ClaimTypes.Role, role)
         };
 
         var token = new JwtSecurityToken(

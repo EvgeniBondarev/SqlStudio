@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SlqStudio.Application.ApiClients.Moodle;
+using SlqStudio.Application.ApiClients.Moodle.Models;
 using SlqStudio.Application.Services;
 using SlqStudio.Application.Services.Implementation;
 using SlqStudio.Application.Services.Models;
@@ -9,6 +10,11 @@ using SlqStudio.Application.Services.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+});
 
 builder.Services.AddAuthentication(options =>
     {
@@ -54,7 +60,7 @@ builder.Services.AddSingleton<MoodleApiClient>();
 
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IJwtTokenHandler, JwtTokenHandler>();
-
+builder.Services.AddScoped<IMoodleService, MoodleService>();
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -66,11 +72,13 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Auth}/{action=Login}");
 
 app.Run();

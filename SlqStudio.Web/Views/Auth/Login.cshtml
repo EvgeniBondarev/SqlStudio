@@ -1,21 +1,16 @@
 ﻿@model SlqStudio.ViewModels.Auth.LoginRequest
 
 @{
-    Layout = null; 
+    Layout = null;
 }
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" />
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/SlqStudio.Web.styles.css" asp-append-version="true" />
 
 <form method="post" class="container mt-5">
     <div class="mb-3">
-        <label for="username" class="form-label">Имя пользователя:</label>
-        <input type="text" class="form-control" id="username" name="Username" required />
-    </div>
-    <div class="mb-3">
-        <label for="password" class="form-label">Пароль:</label>
-        <input type="password" class="form-control" id="password" name="Password" required />
+        <label for="email" class="form-label">Имя пользователя:</label>
+        <input type="text" class="form-control" id="email" name="Email" required />
     </div>
     <button type="submit" class="btn btn-primary">Войти</button>
 </form>
