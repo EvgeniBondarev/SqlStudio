@@ -16,12 +16,13 @@ public class JwtTokenHandler : IJwtTokenHandler
         var claims = claimsPrincipal.Identities.FirstOrDefault()?.Claims;
         return claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
     }
-    public (string Email, UserRole Role) GetClaimsFromToken(string token)
+    public (string Email, UserRole Role, string name) GetClaimsFromToken(string token)
     {
         var validatedToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
         var email = validatedToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
         var roleString = validatedToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var name = validatedToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
         Enum.TryParse(roleString, true, out UserRole role);
-        return (email, role);
+        return (email, role, name);
     }
 }

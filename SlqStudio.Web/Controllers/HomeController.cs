@@ -19,15 +19,13 @@ public class HomeController : Controller
     // Действие Index
     public IActionResult Index()
     {
-        // Например, предполагаем, что токен сохранен в cookies
         var token = Request.Cookies["jwt"];
         
-        // Получаем данные из токена
-        var (email, role) = _jwtTokenHandler.GetClaimsFromToken(token);
+        var (email, role, name) = _jwtTokenHandler.GetClaimsFromToken(token);
         
-        // Сохраняем в сессию
         HttpContext.Session.SetString("UserEmail", email);
         HttpContext.Session.SetString("UserRole", role.ToString());
+        HttpContext.Session.SetString("UserName", name);
 
         return View();
     }

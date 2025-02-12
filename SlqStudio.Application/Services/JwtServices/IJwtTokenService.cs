@@ -2,6 +2,6 @@
 
 ﻿public interface IJwtTokenService
 {
-    string GenerateJwtToken(string email, string role);
+    string GenerateJwtToken(string email, string role, string fullName);
     bool ValidateJwtToken(string authToken);
 }

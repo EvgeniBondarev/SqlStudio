@@ -1,13 +1,21 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using SlqStudio.Application.ApiClients.Moodle;
 using SlqStudio.Application.ApiClients.Moodle.Models;
 using SlqStudio.Application.Services;
 using SlqStudio.Application.Services.Implementation;
 using SlqStudio.Application.Services.Models;
+using SlqStudio.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString =builder.Configuration.GetConnectionString("MySQL");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 builder.Services.AddControllersWithViews();
 

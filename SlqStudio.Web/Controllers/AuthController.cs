@@ -40,7 +40,9 @@ namespace SlqStudio.Controllers
             }
             var course = await _moodleService.GetAllCourseByName("Базы данных");
             var userRole = await _moodleService.GetUserProfileAsync(userData!.Id, course.Id);
-            var tokenString = _jwtTokenService.GenerateJwtToken(request.Email, userRole.Roles.FirstOrDefault().ShortName);
+            var tokenString = _jwtTokenService.GenerateJwtToken(userData.Email, 
+                                                            userRole.Roles.FirstOrDefault().ShortName,
+                                                                userData.FullName);
             Response.Cookies.Append("jwt", tokenString, new CookieOptions
             {
                 HttpOnly = true,
