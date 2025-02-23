@@ -11,3 +11,6 @@ D:\.NETProject\SlqStudio\SlqStudio.Application\obj\Debug\net9.0\refint\SlqStudio
 D:\.NETProject\SlqStudio\SlqStudio.Application\obj\Debug\net9.0\SlqStudio.Application.pdb
 D:\.NETProject\SlqStudio\SlqStudio.Application\obj\Debug\net9.0\ref\SlqStudio.Application.dll
 D:\.NETProject\SlqStudio\SlqStudio.Application\obj\Debug\net9.0\SlqStudio.Application.sourcelink.json
+D:\.NETProject\SlqStudio\SlqStudio.Application\bin\Debug\net9.0\SlqStudio.Persistence.dll
+D:\.NETProject\SlqStudio\SlqStudio.Application\bin\Debug\net9.0\SlqStudio.Persistence.pdb
+D:\.NETProject\SlqStudio\SlqStudio.Application\obj\Debug\net9.0\SlqStudi.6E1E2BC3.Up2Date

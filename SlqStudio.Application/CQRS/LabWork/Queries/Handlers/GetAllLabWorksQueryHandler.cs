@@ -9,6 +9,9 @@ public class GetAllLabWorksQueryHandler : IRequestHandler<GetAllLabWorksQuery, L
     private readonly ApplicationDbContext _context;
     public GetAllLabWorksQueryHandler(ApplicationDbContext context) => _context = context;
 
-    public async Task<List<Persistence.Models.LabWork>> Handle(GetAllLabWorksQuery request, CancellationToken ct)
-        => await _context.LabWorks.ToListAsync(ct);
+    public async Task<List<Persistence.Models.LabWork>> Handle(GetAllLabWorksQuery request, CancellationToken ct) 
+        => await _context.LabWorks
+            .Include(lw => lw.Course)
+            .Include(lw => lw.Tasks)
+            .ToListAsync(ct);
 }

@@ -10,5 +10,5 @@ public class GetAllCoursesQueryHandler : IRequestHandler<GetAllCoursesQuery, Lis
     public GetAllCoursesQueryHandler(ApplicationDbContext context) => _context = context;
 
     public async Task<List<Persistence.Models.Course>> Handle(GetAllCoursesQuery request, CancellationToken ct)
-        => await _context.Courses.ToListAsync(ct);
+        => await _context.Courses.Include(c => c.LabWorks).ToListAsync(ct);
 }

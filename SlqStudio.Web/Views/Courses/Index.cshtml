@@ -1,0 +1,31 @@
+﻿@model IEnumerable<SlqStudio.Persistence.Models.Course>
+@{
+    ViewBag.Title = "Courses";
+}
+<div class="container">
+    <h2>Courses</h2>
+    <a class="btn btn-primary mb-3" href="@Url.Action("Create")">Create New Course</a>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var course in Model)
+        {
+            <tr>
+                <td>@course.Name</td>
+                <td>@course.Description</td>
+                <td>
+                    <a class="btn btn-info btn-sm" href="@Url.Action("Details", new { id = course.Id })">Details</a>
+                    <a class="btn btn-warning btn-sm" href="@Url.Action("Edit", new { id = course.Id })">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="@Url.Action("Delete", new { id = course.Id })">Delete</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

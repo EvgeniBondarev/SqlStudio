@@ -1,0 +1,16 @@
+﻿@model SlqStudio.Persistence.Models.LabWork
+<div class="container">
+    <h2>Lab Work Details</h2>
+    <dl class="row">
+        <dt class="col-sm-2">Name</dt>
+        <dd class="col-sm-10">@Model.Name</dd>
+        <dt class="col-sm-2">Description</dt>
+        <dd class="col-sm-10">@Model.Description</dd>
+        <dt class="col-sm-2">Number</dt>
+        <dd class="col-sm-10">@Model.Number</dd>
+        <dt class="col-sm-2">Course</dt>
+        <dd class="col-sm-10">@Model.Course?.Name</dd>
+    </dl>
+    <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.Id })">Edit</a>
+    <a class="btn btn-secondary" href="@Url.Action("Index")">Back to List</a>
+</div>

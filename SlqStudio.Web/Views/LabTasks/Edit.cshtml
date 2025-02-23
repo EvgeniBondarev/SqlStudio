@@ -1,0 +1,33 @@
+﻿@model SlqStudio.Application.CQRS.LabTask.Commands.UpdateTaskCommand
+<div class="container">
+    <h2>Edit Lab Task</h2>
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label asp-for="Number"></label>
+            <input asp-for="Number" class="form-control" />
+            <span asp-validation-for="Number" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Condition"></label>
+            <textarea asp-for="Condition" class="form-control"></textarea>
+            <span asp-validation-for="Condition" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="SolutionExample"></label>
+            <textarea asp-for="SolutionExample" class="form-control"></textarea>
+            <span asp-validation-for="SolutionExample" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Lab Work</label>
+            @Html.DropDownList("LabWorkId", (SelectList)ViewBag.LabWorks, "Select Lab Work", new { @class = "form-control" })
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+        <a class="btn btn-secondary mt-3" href="@Url.Action("Index")">Cancel</a>
+    </form>
+</div>

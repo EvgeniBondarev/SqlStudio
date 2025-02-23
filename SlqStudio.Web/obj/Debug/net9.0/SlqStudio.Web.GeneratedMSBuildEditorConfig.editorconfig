@@ -24,6 +24,26 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/Courses/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/Courses/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/Courses/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/Courses/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/Courses/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/.NETProject/SlqStudio/SlqStudio.Web/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -32,12 +52,56 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/LabTasks/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFiVGFza3NcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/LabTasks/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFiVGFza3NcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/LabTasks/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFiVGFza3NcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/LabTasks/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFiVGFza3NcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/LabTasks/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFiVGFza3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/LabWorks/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFiV29ya3NcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/LabWorks/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFiV29ya3NcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/LabWorks/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFiV29ya3NcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/LabWorks/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFiV29ya3NcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/LabWorks/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFiV29ya3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/.NETProject/SlqStudio/SlqStudio.Web/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/.NETProject/SlqStudio/SlqStudio.Web/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.NETProject/SlqStudio/SlqStudio.Web/Views/Solution/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU29sdXRpb25cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/.NETProject/SlqStudio/SlqStudio.Web/Views/_ViewImports.cshtml]
