@@ -1,7 +1,9 @@
 ﻿using Application.Common.SQL;
+using Application.Common.SQL.ResponseModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SlqStudio.Application.CQRS.LabTask.Queries;
+using SlqStudio.Session;
 using SlqStudio.ViewModel.Mappers;
 using SlqStudio.ViewModel.Models;
 using SlqStudio.ViewModels;
@@ -51,7 +53,30 @@ public class SolutionController : Controller
 
         if (response == null)
             return BadRequest("Ошибка сравнения данных SQL.");
+        
+        UpdateComparisonResultsInSession(request.TaskId, response.DataIsEqual, request.SqlQuery);
 
         return Ok(response);
+    }
+
+    private void UpdateComparisonResultsInSession(int taskId, bool result, string userSolution)
+    {
+        var comparisonResults = HttpContext.Session.GetObjectFromJson<List<ComparisonResult>>("ComparisonResults") ?? new List<ComparisonResult>();
+        var existingResult = comparisonResults.FirstOrDefault(r => r.TaskId == taskId);
+
+        if (existingResult != null)
+        {
+            existingResult.Result = result;
+        }
+        else
+        {
+            comparisonResults.Add(new ComparisonResult
+            {
+                TaskId = taskId,
+                Result = result,
+                UserSolutionText = userSolution
+            });
+        }
+        HttpContext.Session.SetObjectAsJson("ComparisonResults", comparisonResults);
     }
 }

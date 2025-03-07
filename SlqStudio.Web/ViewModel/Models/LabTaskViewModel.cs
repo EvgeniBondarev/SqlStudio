@@ -6,5 +6,6 @@ public class LabTaskViewModel
     public int Number { get; set; }
     public string Title { get; set; }
     public string Condition { get; set; }
+    public int LabWorkId { get; set; }
     public List<Dictionary<string, object>>? QueryData { get; set; }
 }

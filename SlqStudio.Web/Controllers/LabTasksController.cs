@@ -27,6 +27,14 @@ namespace SlqStudio.Controllers;
                 return NotFound();
             return View(taskItem);
         }
+        
+        public async Task<IActionResult> DetailsByWork(int id)
+        {
+            var labWorkItem = await _mediator.Send(new GetLabWorkByIdQuery(id));
+            if (labWorkItem == null)
+                return NotFound();
+            return View(labWorkItem.Tasks);
+        }
 
         // GET: /LabTasks/Create
         public async Task<IActionResult> Create()

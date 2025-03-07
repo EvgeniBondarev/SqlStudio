@@ -13,6 +13,7 @@ public static class LabTaskMapper
             Number = labTask.Number,
             Title = labTask.Title,
             Condition = labTask.Condition,
+            LabWorkId = labTask.LabWorkId,
             QueryData = null
         };
     }

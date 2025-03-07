@@ -1,0 +1,25 @@
+﻿@model IEnumerable<SlqStudio.Persistence.Models.LabWork>
+
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Number</th>
+            <th>Course</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var lab in Model)
+        {
+            <tr onclick="window.location.href='@Url.Action("DetailsByWork", "LabTasks", new { id = lab.Id })'" style="cursor:pointer;">
+                <td>@lab.Name</td>
+                <td>@lab.Description</td>
+                <td>@lab.Number</td>
+                <td>@lab.Course?.Name</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

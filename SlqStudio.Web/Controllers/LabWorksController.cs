@@ -18,6 +18,12 @@ public class LabWorksController : Controller
             var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
             return View(labWorks);
         }
+        
+        public async Task<IActionResult> LabList()
+        {
+            var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
+            return View(labWorks);
+        }
 
         // GET: /LabWorks/Details/5
         public async Task<IActionResult> Details(int id)

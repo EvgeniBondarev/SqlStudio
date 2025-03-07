@@ -1,0 +1,33 @@
+﻿@using Application.Common.SQL.ResponseModels
+@using SlqStudio.Session
+@model IEnumerable<SlqStudio.Persistence.Models.LabTask>
+@{
+    var comparisonResults = Context.Session.GetObjectFromJson<List<ComparisonResult>>("ComparisonResults") ?? new List<ComparisonResult>();
+}
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Number</th>
+            <th>Title</th>
+            <th>Lab Work</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var task in Model)
+        {
+            var result = comparisonResults.FirstOrDefault(r => r.TaskId == task.Id);
+            string rowClass = result != null ? (result.Result ? "table-success" : "table-danger") : "";
+
+            <tr onclick="window.location.href='@Url.Action("Index", "Solution", new { taskId = task.Id })'" style="cursor:pointer;" class="@rowClass">
+                <td>@task.Number</td>
+                <td>@task.Title</td>
+                <td>@task.LabWork?.Name</td>
+            </tr>
+        }
+        </tbody>
+        
+    </table>
+    <br/>
+    <a asp-area="" asp-action="Index" asp-controller="Report" class="btn btn-primary mt-3 d-inline-block">Закончить</a>
+</div>

@@ -85,17 +85,17 @@
                 <div class="code-block">
                     <h3>SQL Редактор</h3>
                     <textarea id="sqlScript">
-CREATE FUNCTION dbo.GetLabCount()
-RETURNS TABLE
-AS
-RETURN
-(
-	SELECT COUNT(*) AS LabCount
-	FROM Labs
-);
-GO
-SELECT * FROM dbo.GetLabCount();
-                        </textarea>
+                CREATE FUNCTION dbo.GetLabCount()
+                RETURNS TABLE
+                AS
+                RETURN
+                (
+	                SELECT COUNT(*) AS LabCount
+	                FROM Labs
+                );
+                GO
+                SELECT * FROM dbo.GetLabCount();
+                    </textarea>
                     <button id="run-query" class="btn btn-primary mt-3" lab-id="@Model.Id">Run Query</button>
                 </div>
                 <div id="query-result" class="result-table table-responsive">
@@ -155,6 +155,7 @@ SELECT * FROM dbo.GetLabCount();
                         <p>Нет данных для отображения.</p>
                     }
                 </div>
+                <a asp-area="" asp-action="DetailsByWork" asp-controller="LabTasks" asp-route-id="@Model.LabWorkId" class="btn btn-primary mt-3 d-inline-block">Закончить</a>
             </div>
         </div>
     </div>
