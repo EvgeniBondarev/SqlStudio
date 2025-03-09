@@ -31,11 +31,6 @@ namespace Application.Common.SQL
 
         public async Task<CompareResponse> CompareSqlResultsAsync(string sql1, string sql2)
         {
-            var servers = new List<(string, int)>
-                                {
-                                    ("127.0.0.1", 5000),
-                                    ("127.0.0.1", 5001)
-                                };
 
             var task1 = ExecuteQueryAsync(sql1);
             var task2 = ExecuteQueryAsync(sql2);

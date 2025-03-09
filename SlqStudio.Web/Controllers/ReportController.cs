@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SlqStudio.Application.CQRS.LabTask.Queries;
 using SlqStudio.Application.CQRS.LabWork.Queries;
+using SlqStudio.Application.Services.EmailService;
 using SlqStudio.DTO;
 using SlqStudio.Persistence.Models;
 using SlqStudio.Session;
@@ -12,10 +13,12 @@ namespace SlqStudio.Controllers;
 public class ReportController : Controller
 {
     private readonly IMediator _mediator;
+    private readonly IEmailService _emailService;
 
-    public ReportController(IMediator mediator)
+    public ReportController(IMediator mediator, IEmailService emailService)
     {
         _mediator = mediator;
+        _emailService = emailService;
     }
     
     public async Task<IActionResult> Index()
@@ -42,12 +45,9 @@ public class ReportController : Controller
     }
     
     [HttpPost]
-    public IActionResult SubmitReport(ReportDto report)
+    public async Task<IActionResult> SubmitReport(ReportDto report)
     {
-        // Здесь можно обработать полученный отчет
-        // Например, сохранить его в базу данных или отправить по электронной почте
-
-        // В данном примере просто возвращаем представление с полученными данными
+        var result  =await _emailService.SendEmailAsync("evgbondarev@edu.gstu.by", "test", "test");
         return View("ReportSubmitted", report);
     }
     
