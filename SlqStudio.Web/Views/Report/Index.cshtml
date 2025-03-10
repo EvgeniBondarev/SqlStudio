@@ -1,6 +1,25 @@
 ﻿@model SlqStudio.DTO.ReportDto
 
+
+
 <div class="container">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div id="success-alert" class="alert alert-success alert-dismissible alert mt-3" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999; padding: 10px 20px; text-align: center;">
+            @TempData["SuccessMessage"]
+            <button type="button" class="close" onclick="closeAlert('success-alert')">&times;</button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div id="error-alert" class="alert alert-danger alert-dismissible mt-3" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999; padding: 10px 20px; text-align: center;">
+            @TempData["ErrorMessage"]
+            <button type="button" class="close" onclick="closeAlert('error-alert')">&times;</button>
+        </div>
+    }
+    
     <h2>Отчет по лабораторным работам</h2>
     <h4>@Model.User.Name</h4>
     <p>@Model.User.Email</p>
@@ -23,13 +42,13 @@
             @foreach (var task in lab.Tasks)
             {
                 var status = Model.Solutions.FirstOrDefault(s => s.TaskId == task.Id)?.IsSuccess == true ? "✅ Выполнено" : "❌ Не выполнено";
-                string rowClass =  Model.Solutions.FirstOrDefault(s => s.TaskId == task.Id)?.IsSuccess == true ? "table-success" : "table-danger";
+                string rowClass = Model.Solutions.FirstOrDefault(s => s.TaskId == task.Id)?.IsSuccess == true ? "table-success" : "table-danger";
                 string userSolution = Model.Solutions.FirstOrDefault(s => s.TaskId == task.Id)?.UserSolutionText ?? "Решение отсутствует";
                 string shortSolution = userSolution.Length > 20 ? userSolution.Substring(0, 20) + "..." : userSolution;
-                
+
                 <tr class="@rowClass">
                     <td>@task.Number</td>
-                    <td onclick="window.location.href='@Url.Action("Index", "Solution", new { taskId = task.Id })'" style="cursor:pointer;" >@task.Title</td>
+                    <td onclick="window.location.href='@Url.Action("Index", "Solution", new { taskId = task.Id })'" style="cursor:pointer;">@task.Title</td>
                     <td onclick="showSolutionModal('@task.Id', @Html.Raw(userSolution.Replace("\n", "\\n").Replace("\r", "")))" style="cursor:pointer;">
                         @shortSolution
                     </td>
@@ -39,42 +58,13 @@
             </tbody>
         </table>
 
-        <hr /> 
+        <hr/>
     }
 
     <form asp-action="SubmitReport" asp-controller="Report" method="post">
-        <input type="hidden" name="User.Email" value="@Model.User.Email" />
-        <input type="hidden" name="User.Name" value="@Model.User.Name" />
-
-        @for (int i = 0; i < Model.LabWorks.Count; i++)
-        {
-            var lab = Model.LabWorks[i];
-            <input type="hidden" name="LabWorks[@i].Id" value="@lab.Id" />
-            <input type="hidden" name="LabWorks[@i].Name" value="@lab.Name" />
-            <input type="hidden" name="LabWorks[@i].Description" value="@lab.Description" />
-            <input type="hidden" name="LabWorks[@i].Number" value="@lab.Number" />
-            <input type="hidden" name="LabWorks[@i].CourseId" value="@lab.CourseId" />
-
-            @for (int j = 0; j < lab.Tasks.Count; j++)
-            {
-                var task = lab.Tasks.ToList()[j];
-                <input type="hidden" name="LabWorks[@i].Tasks[@j].Id" value="@task.Id" />
-                <input type="hidden" name="LabWorks[@i].Tasks[@j].Title" value="@task.Title" />
-                <input type="hidden" name="LabWorks[@i].Tasks[@j].Number" value="@task.Number" />
-            }
-        }
-
-        @for (int k = 0; k < Model.Solutions.Count; k++)
-        {
-            var solution = Model.Solutions[k];
-            <input type="hidden" name="Solutions[@k].TaskId" value="@solution.TaskId" />
-            <input type="hidden" name="Solutions[@k].IsSuccess" value="@solution.IsSuccess" />
-            <input type="hidden" name="Solutions[@k].UserSolutionText" value="@solution.UserSolutionText" />
-        }
-
         <button type="submit" class="btn btn-primary">Отправить отчет</button>
     </form>
-    
+
 </div>
 
 <!-- Подключение стилей и скриптов CodeMirror -->
@@ -116,4 +106,18 @@
     function closeSolutionModal() {
         document.getElementById("solutionModal").style.display = "none";
     }
+
+    function closeAlert(alertId) {
+        let alertElement = document.getElementById(alertId);
+        if (alertElement) {
+            alertElement.remove();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+            closeAlert("success-alert");
+            closeAlert("error-alert");
+        }, 5000);
+    });
 </script>

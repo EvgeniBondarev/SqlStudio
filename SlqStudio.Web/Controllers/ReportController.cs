@@ -20,13 +20,45 @@ public class ReportController : Controller
         _mediator = mediator;
         _emailService = emailService;
     }
-    
+
     public async Task<IActionResult> Index()
+    {
+        var reportDto = await CreateReportDtoAsync();
+        return View(reportDto);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SubmitReport(ReportDto report)
+    {
+        var reportDto = await CreateReportDtoAsync();
+
+        var builder = new ReportHtmlBuilder()
+            .AddUserInfo(reportDto.User)
+            .AddWorkInfo(reportDto.Solutions, reportDto.LabWorks)
+            .AddSolutionDetails(reportDto.Solutions, reportDto.LabWorks);
+
+        string htmlReport = builder.Build();
+        var result = await _emailService.SendEmailAsync("evgbondarev@edu.gstu.by", reportDto.User.Email, htmlReport);
+
+        if (result)
+        {
+            TempData["SuccessMessage"] = "Отчет успешно отправлен!";
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Ошибка при отправке отчета. Попробуйте снова.";
+        }
+
+        return RedirectToAction("Index");
+    }
+
+
+    private async Task<ReportDto> CreateReportDtoAsync()
     {
         var user = GetUserFromSession();
         var solutionResults = GetSolutionResultsFromSession();
-        List<LabWork> labWorks = new List<LabWork>();
-        
+        var labWorks = new List<LabWork>();
+
         foreach (var solutionResult in solutionResults)
         {
             var taskItem = await _mediator.Send(new GetTaskByIdQuery(solutionResult.TaskId));
@@ -34,24 +66,17 @@ public class ReportController : Controller
             {
                 labWorks.Add(await _mediator.Send(new GetLabWorkByIdQuery(taskItem.LabWork.Id)));
             }
-            
         }
-        return View(new ReportDto()
+
+        return new ReportDto
         {
             User = user,
             Solutions = solutionResults,
             LabWorks = labWorks
-        });
+        };
     }
-    
-    [HttpPost]
-    public async Task<IActionResult> SubmitReport(ReportDto report)
-    {
-        var result  =await _emailService.SendEmailAsync("evgbondarev@edu.gstu.by", "test", "test");
-        return View("ReportSubmitted", report);
-    }
-    
-    public UserDto GetUserFromSession()
+
+    private UserDto GetUserFromSession()
     {
         var email = HttpContext.Session.GetString("UserEmail");
         var name = HttpContext.Session.GetString("UserName");
@@ -62,8 +87,8 @@ public class ReportController : Controller
             Name = name
         };
     }
-    
-    public List<SolutionResultDto> GetSolutionResultsFromSession()
+
+    private List<SolutionResultDto> GetSolutionResultsFromSession()
     {
         var comparisonResults = HttpContext.Session.GetObjectFromJson<List<ComparisonResult>>("ComparisonResults") ?? new List<ComparisonResult>();
 
@@ -74,5 +99,4 @@ public class ReportController : Controller
             UserSolutionText = r.UserSolutionText
         }).ToList();
     }
-
 }
