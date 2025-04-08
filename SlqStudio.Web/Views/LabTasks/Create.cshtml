@@ -1,6 +1,7 @@
 ﻿@model SlqStudio.Application.CQRS.LabTask.Commands.CreateTaskCommand
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 <div class="container">
-    <h2>Create Lab Task</h2>
+    <h2>Создание лабораторной задачи</h2>
     <form asp-action="Create" method="post">
         <div class="form-group">
             <label asp-for="Number"></label>
@@ -14,7 +15,7 @@
         </div>
         <div class="form-group">
             <label asp-for="Condition"></label>
-            <textarea asp-for="Condition" class="form-control"></textarea>
+            <textarea asp-for="Condition" class="form-control" id="condition-editor"></textarea>
             <span asp-validation-for="Condition" class="text-danger"></span>
         </div>
         <div class="form-group">
@@ -23,10 +24,26 @@
             <span asp-validation-for="SolutionExample" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label>Lab Work</label>
-            @Html.DropDownList("LabWorkId", (SelectList)ViewBag.LabWorks, "Select Lab Work", new { @class = "form-control" })
+            <label>Лабораторная работа</label>
+            @Html.DropDownList("LabWorkId", (SelectList)ViewBag.LabWorks, "Выберите лабораторную работу", new { @class = "form-control" })
         </div>
-        <button type="submit" class="btn btn-primary mt-3">Create</button>
-        <a class="btn btn-secondary mt-3" href="@Url.Action("Index")">Cancel</a>
+        <button type="submit" class="btn btn-primary mt-3">Создать</button>
+        <a class="btn btn-secondary mt-3" href="@Url.Action("Index")">Отмена</a>
     </form>
 </div>
+
+<script>
+    tinymce.init({
+        selector: '#condition-editor',
+        height: 300,
+        menubar: false,
+        plugins: [
+            'advlist autolink lists link image charmap print preview anchor',
+            'searchreplace visualblocks code fullscreen',
+            'insertdatetime media table paste code help wordcount'
+        ],
+        toolbar: 'undo redo | formatselect | bold italic backcolor | \
+                  alignleft aligncenter alignright alignjustify | \
+                  bullist numlist outdent indent | removeformat | help'
+    });
+</script>

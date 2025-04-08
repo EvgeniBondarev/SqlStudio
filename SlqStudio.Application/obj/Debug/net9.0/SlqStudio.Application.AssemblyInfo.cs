@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SlqStudio.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bfa4526054ff960b49c878da7adc26e641dc151d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b8b0d0a62c8945ae66d7bc5b23eaac8d99da8060")]
 [assembly: System.Reflection.AssemblyProductAttribute("SlqStudio.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SlqStudio.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
