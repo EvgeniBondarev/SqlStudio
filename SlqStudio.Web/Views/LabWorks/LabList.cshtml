@@ -1,25 +1,142 @@
 ﻿@model IEnumerable<SlqStudio.Persistence.Models.LabWork>
 
-<div class="container">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Название</th>
-            <th>Описание</th>
-            <th>Номер</th>
-            <th>Курс</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var lab in Model)
-        {
-            <tr onclick="window.location.href='@Url.Action("DetailsByWork", "LabTasks", new { id = lab.Id })'" style="cursor:pointer;">
-                <td>@lab.Name</td>
-                <td>@lab.Description</td>
-                <td>@lab.Number</td>
-                <td>@lab.Course?.Name</td>
-            </tr>
+@{
+    ViewData["Title"] = "Список лабораторных";
+    Layout = "_Layout";
+    var isAdmin = Context.Session.GetString("UserRole") == "EditingTeacher";
+}
+
+<main class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="row valign-wrapper" style="margin-bottom: 0;">
+                        <div class="col s8">
+                            <span class="card-title">Лабораторные работы</span>
+                        </div>
+                        @if(isAdmin)
+                        {
+                            <div class="col s4 right-align">
+                                <a asp-controller="LabWorks" asp-action="Create"
+                                   class="btn waves-effect waves-light light-blue">
+                                    <i class="material-icons left">add</i> Добавить работу
+                                </a>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="divider" style="margin: 20px 0;"></div>
+
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="responsive-table-container">
+                                <table class="highlight striped">
+                                    <thead class="light-blue lighten-2 white-text">
+                                    <tr>
+                                        <th><i class="material-icons">title</i> Название</th>
+                                        <th><i class="material-icons">description</i> Описание</th>
+                                        <th><i class="material-icons">format_list_numbered</i> Номер</th>
+                                        <th><i class="material-icons">school</i> Курс</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var lab in Model)
+                                    {
+                                        <tr>
+                                            <td>@lab.Name</td>
+                                            <td>@(lab.Description?.Length > 50 ? lab.Description.Substring(0, 50) + "..." : lab.Description)</td>
+                                            <td>@lab.Number</td>
+                                            <td>
+                                                @if(lab.Course != null)
+                                                {
+                                                    <span class="chip light-blue lighten-1 white-text">
+                                                        @lab.Course.Name
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <a href="@Url.Action("DetailsByWork", "LabTasks", new { id = lab.Id })"
+                                                       class="btn-floating waves-effect waves-light light-blue tooltipped"
+                                                       data-position="top"
+                                                       data-tooltip="Просмотр заданий">
+                                                        <i class="material-icons">assignment</i>
+                                                    </a>
+                                                    @if(isAdmin)
+                                                    {
+                                                        <a href="@Url.Action("Edit", "LabWorks", new { id = lab.Id })"
+                                                           class="btn-floating waves-effect waves-light teal tooltipped"
+                                                           data-position="top"
+                                                           data-tooltip="Редактировать">
+                                                            <i class="material-icons">edit</i>
+                                                        </a>
+                                                        <a href="@Url.Action("Delete", "LabWorks", new { id = lab.Id })"
+                                                           class="btn-floating waves-effect waves-light red tooltipped"
+                                                           data-position="top"
+                                                           data-tooltip="Удалить">
+                                                            <i class="material-icons">delete</i>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+    <style>
+        .responsive-table-container {
+            overflow-x: auto;
+            margin: 20px 0;
         }
-        </tbody>
-    </table>
-</div>
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            height: 32px;
+            padding: 0 12px;
+            border-radius: 16px;
+            font-size: 13px;
+        }
+
+        .chip i.material-icons {
+            margin-right: 5px;
+            font-size: 16px;
+        }
+
+        table.highlight tbody tr:hover {
+            background-color: #e1f5fe !important;
+        }
+
+        .btn-floating {
+            margin: 0 4px;
+        }
+    </style>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация подсказок
+            var tooltips = document.querySelectorAll('.tooltipped');
+            M.Tooltip.init(tooltips);
+        });
+    </script>
+}

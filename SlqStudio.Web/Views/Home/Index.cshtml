@@ -1,18 +1,109 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Главная страница";
+    Layout = "_Layout";
     var userEmail = Context.Session.GetString("UserEmail");
     var userRole = Context.Session.GetString("UserRole");
     var userName = Context.Session.GetString("UserName");
+    var isAdmin = userRole == "EditingTeacher";
 }
 
-<div>
-    <p>Email пользователя: @userEmail</p>
-    <p>Роль пользователя: @userRole</p>
-    <p>Имя @userName</p>
-</div>
+<main class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Добро пожаловать в SlqStudio</span>
 
+                    @if (!string.IsNullOrEmpty(userName))
+                    {
+                        <div class="user-info-section" style="margin-bottom: 20px;">
+                            <div class="chip light-blue lighten-2 white-text">
+                                <i class="material-icons tiny">account_circle</i>
+                                @userName
+                            </div>
+                            <div class="chip light-blue lighten-1 white-text" style="margin-left: 10px;">
+                                <i class="material-icons tiny">email</i>
+                                @userEmail
+                            </div>
+                            <div class="chip light-blue darken-1 white-text" style="margin-left: 10px;">
+                                <i class="material-icons tiny">security</i>
+                                @userRole
+                            </div>
+                        </div>
+                    }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+                    <div class="divider" style="margin: 20px 0;"></div>
+
+                    <div class="row">
+                        <!-- Основные карточки для всех пользователей -->
+                        <div class="col s12 m6">
+                            <div class="card-panel light-blue lighten-5">
+                                <i class="material-icons large light-blue-text">school</i>
+                                <h5>Изучение SQL</h5>
+                                <p>Практикуйтесь в написании SQL-запросов на различных СУБД</p>
+                                <a asp-controller="LabWorks" asp-action="LabList" class="btn waves-effect waves-light light-blue">
+                                    Перейти к работам
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col s12 m6">
+                            <div class="card-panel light-blue lighten-5">
+                                <i class="material-icons large light-blue-text">code</i>
+                                <h5>О проекте</h5>
+                                <p>Учебная платформа для изучения SQL и работы с базами данных</p>
+                                <a href="https://github.com/EvgeniBondarev/SqlStudio" target="_blank" class="btn waves-effect waves-light light-blue">
+                                    <i class="material-icons left">open_in_new</i> GitHub
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Карточки только для администратора -->
+                        @if (isAdmin)
+                        {
+                            <div class="col s12 m6">
+                                <div class="card-panel teal lighten-5">
+                                    <i class="material-icons large teal-text">build</i>
+                                    <h5>Управление работами</h5>
+                                    <p>Создание и редактирование лабораторных работ</p>
+                                    <div class="row" style="margin-top: 15px;">
+                                        <div class="col s6">
+                                            <a asp-controller="LabWorks" asp-action="Create" class="btn waves-effect waves-light teal">
+                                                <i class="material-icons left">add</i> Создать
+                                            </a>
+                                        </div>
+                                        <div class="col s6">
+                                            <a asp-controller="LabWorks" asp-action="Index" class="btn waves-effect waves-light teal">
+                                                <i class="material-icons left">list</i> Список
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6">
+                                <div class="card-panel teal lighten-5">
+                                    <i class="material-icons large teal-text">assignment</i>
+                                    <h5>Управление заданиями</h5>
+                                    <p>Создание и редактирование задач для лабораторных работ</p>
+                                    <div class="row" style="margin-top: 15px;">
+                                        <div class="col s6">
+                                            <a asp-controller="LabTasks" asp-action="Create" class="btn waves-effect waves-light teal">
+                                                <i class="material-icons left">add</i> Создать
+                                            </a>
+                                        </div>
+                                        <div class="col s6">
+                                            <a asp-controller="LabTasks" asp-action="Index" class="btn waves-effect waves-light teal">
+                                                <i class="material-icons left">list</i> Список
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

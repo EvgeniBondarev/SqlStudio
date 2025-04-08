@@ -1,123 +1,311 @@
-﻿@model SlqStudio.DTO.ReportDto
+﻿@using System.Web
+@model SlqStudio.DTO.ReportDto
+@{
+    Layout = "_Layout";
+}
 
-
-
-<div class="container">
-
+<main class="container">
+    <!-- Уведомления -->
     @if (TempData["SuccessMessage"] != null)
     {
-        <div id="success-alert" class="alert alert-success alert-dismissible alert mt-3" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999; padding: 10px 20px; text-align: center;">
+        <div id="success-alert" class="alert-container green lighten-2 white-text">
             @TempData["SuccessMessage"]
-            <button type="button" class="close" onclick="closeAlert('success-alert')">&times;</button>
+            <i class="material-icons right alert-close" onclick="closeAlert('success-alert')">close</i>
         </div>
     }
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <div id="error-alert" class="alert alert-danger alert-dismissible mt-3" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999; padding: 10px 20px; text-align: center;">
+        <div id="error-alert" class="alert-container red lighten-2 white-text">
             @TempData["ErrorMessage"]
-            <button type="button" class="close" onclick="closeAlert('error-alert')">&times;</button>
+            <i class="material-icons right alert-close" onclick="closeAlert('error-alert')">close</i>
         </div>
     }
-    
-    <h2>Отчет по лабораторным работам</h2>
-    <h4>@Model.User.Name</h4>
-    <p>@Model.User.Email</p>
 
-    @foreach (var lab in Model.LabWorks)
-    {
-        <h3>@lab.Name</h3>
-        <p><strong>Курс:</strong> @lab.Course?.Name</p>
+    <div class="card">
+        <div class="card-content">
+            <div class="row valign-wrapper" style="margin-bottom: 0;">
+                <div class="col s8">
+                    <span class="card-title">Отчет по лабораторным работам</span>
+                </div>
+                <div class="col s4 right-align">
+                    <form asp-action="SubmitReport" asp-controller="Report" method="post">
+                        <button type="submit" class="btn waves-effect waves-light light-blue">
+                            <i class="material-icons left">send</i>Отправить отчет
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>№ Задачи</th>
-                <th>Название</th>
-                <th>Решение</th>
-                <th>Статус</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var task in lab.Tasks)
+            <div class="divider" style="margin: 20px 0;"></div>
+
+            <div class="row">
+                <div class="col s12 user-info">
+                    <div class="chip light-blue lighten-2 white-text">
+                        <i class="material-icons">person</i>
+                        @Model.User.Name
+                    </div>
+                    <div class="chip light-blue lighten-1 white-text" style="margin-left: 10px;">
+                        <i class="material-icons">email</i>
+                        @Model.User.Email
+                    </div>
+                </div>
+            </div>
+
+            @foreach (var lab in Model.LabWorks)
             {
-                var status = Model.Solutions.FirstOrDefault(s => s.TaskId == task.Id)?.IsSuccess == true ? "✅ Выполнено" : "❌ Не выполнено";
-                string rowClass = Model.Solutions.FirstOrDefault(s => s.TaskId == task.Id)?.IsSuccess == true ? "table-success" : "table-danger";
-                string userSolution = Model.Solutions.FirstOrDefault(s => s.TaskId == task.Id)?.UserSolutionText ?? "Решение отсутствует";
-                string shortSolution = userSolution.Length > 20 ? userSolution.Substring(0, 20) + "..." : userSolution;
+                <div class="section">
+                    <div class="row valign-wrapper">
+                        <div class="col s10">
+                            <h5><i class="material-icons left light-blue-text">work</i>@lab.Name</h5>
+                            @if(lab.Course != null)
+                            {
+                                <div class="chip light-blue lighten-1 white-text">
+                                    <i class="material-icons left">school</i>
+                                    @lab.Course.Name
+                                </div>
+                            }
+                        </div>
+                    </div>
 
-                <tr class="@rowClass">
-                    <td>@task.Number</td>
-                    <td onclick="window.location.href='@Url.Action("Index", "Solution", new { taskId = task.Id })'" style="cursor:pointer;">@task.Title</td>
-                    <td onclick="showSolutionModal('@task.Id', @Html.Raw(userSolution.Replace("\n", "\\n").Replace("\r", "")))" style="cursor:pointer;">
-                        @shortSolution
-                    </td>
-                    <td>@status</td>
-                </tr>
+                    <div class="responsive-table-container">
+                        <table class="highlight striped">
+                            <thead class="light-blue lighten-2 white-text">
+                            <tr>
+                                <th><i class="material-icons">format_list_numbered</i> №</th>
+                                <th><i class="material-icons">title</i> Название</th>
+                                <th><i class="material-icons">code</i> Решение</th>
+                                <th><i class="material-icons">info</i> Статус</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var task in lab.Tasks)
+                            {
+                                var status = Model.Solutions.FirstOrDefault(s => s.TaskId == task.Id)?.IsSuccess == true ? "Выполнено" : "Не выполнено";
+                                string rowClass = Model.Solutions.FirstOrDefault(s => s.TaskId == task.Id)?.IsSuccess == true ? "green lighten-4" : "red lighten-4";
+                                string userSolution = Model.Solutions.FirstOrDefault(s => s.TaskId == task.Id)?.UserSolutionText ?? "Решение отсутствует";
+                                string shortSolution = userSolution.Length > 20 ? userSolution.Substring(0, 20) + "..." : userSolution;
+
+                                <tr class="@rowClass">
+                                    <td>@task.Number</td>
+                                    <td onclick="window.location.href='@Url.Action("Index", "Solution", new { taskId = task.Id })'" style="cursor:pointer;">@task.Title</td>
+                                    <td onclick="showSolutionModal('@task.Id', '@Html.Raw(HttpUtility.JavaScriptStringEncode(userSolution))')" style="cursor:pointer;">
+                                        @shortSolution
+                                    </td>
+                                    <td>
+                                        <div class="valign-wrapper">
+                                            @if (Model.Solutions.FirstOrDefault(s => s.TaskId == task.Id)?.IsSuccess == true)
+                                            {
+                                                <i class="material-icons green-text">check_circle</i>
+                                            }
+                                            else
+                                            {
+                                                <i class="material-icons red-text">error</i>
+                                            }
+                                            <span style="margin-left: 8px;">@status</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="divider"></div>
             }
-            </tbody>
-        </table>
+        </div>
+    </div>
+</main>
 
-        <hr/>
-    }
-
-    <form asp-action="SubmitReport" asp-controller="Report" method="post">
-        <button type="submit" class="btn btn-primary">Отправить отчет</button>
-    </form>
-
-</div>
-
-<!-- Подключение стилей и скриптов CodeMirror -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/eclipse.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/sql/sql.min.js"></script>
-
-<!-- HTML-разметка всплывающего окна -->
-<div id="solutionModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
-    <div class="modal-content" style="background: white; width: 50%; margin: 10% auto; padding: 20px; border-radius: 8px; position: relative;">
-        <span onclick="closeSolutionModal()" style="position: absolute; top: 10px; right: 15px; font-size: 20px; cursor: pointer;">&times;</span>
-        <h3>Полное решение</h3>
+<!-- Модальное окно для решения -->
+<div id="solutionModal" class="modal">
+    <div class="modal-content">
+        <h4>Полное решение</h4>
         <textarea id="sqlSolutionArea"></textarea>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-light btn light-blue">Закрыть</a>
     </div>
 </div>
 
-<script>
-    let editor;
+<!-- Подключение CodeMirror -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material.min.css">
 
-    function showSolutionModal(taskId, solutionText) {
-        document.getElementById("solutionModal").style.display = "block";
+<style>
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 500;
+    }
 
-        let textarea = document.getElementById("sqlSolutionArea");
-        textarea.value = solutionText;
+    .alert-container {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        max-width: 80%;
+        padding: 15px;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
 
-        if (!editor) {
+    .alert-close {
+        cursor: pointer;
+        margin-left: 15px;
+    }
+
+    .responsive-table-container {
+        overflow-x: auto;
+        margin: 20px 0;
+    }
+
+    table.highlight tbody tr:hover {
+        background-color: #e1f5fe !important;
+    }
+
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        height: 32px;
+        padding: 0 12px;
+        border-radius: 16px;
+        font-size: 13px;
+        margin-right: 10px;
+    }
+
+    .chip i.material-icons {
+        margin-right: 5px;
+        font-size: 16px;
+    }
+
+    .valign-wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    .modal {
+        width: 80%;
+        max-width: 800px;
+    }
+
+    .modal-content {
+        padding: 24px;
+        height: 70vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .CodeMirror {
+        height: 100%;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .section {
+        padding: 20px 0;
+    }
+
+    .divider {
+        margin: 20px 0;
+    }
+
+    h5 {
+        font-size: 1.3rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    th {
+        font-weight: 500;
+    }
+
+    td, th {
+        padding: 12px 15px;
+    }
+
+    .btn {
+        margin-left: 10px;
+    }
+
+    @@media (max-width: 600px) {
+        .modal {
+            width: 95%;
+        }
+
+        .modal-content {
+            height: 60vh;
+            padding: 15px;
+        }
+
+        td, th {
+            padding: 8px 10px;
+        }
+
+        .chip {
+            margin-bottom: 5px;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/sql/sql.min.js"></script>
+
+    <script>
+        let editor;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация модального окна
+            var elems = document.querySelectorAll('.modal');
+            M.Modal.init(elems, {
+                onOpenEnd: function() {
+                    if (editor) {
+                        editor.refresh();
+                        editor.scrollTo(0, 0);
+                    }
+                }
+            });
+
+            // Автозакрытие уведомлений
+            setTimeout(function() {
+                closeAlert("success-alert");
+                closeAlert("error-alert");
+            }, 5000);
+        });
+
+        function showSolutionModal(taskId, solutionText) {
+            var modal = M.Modal.getInstance(document.getElementById('solutionModal'));
+
+            if (editor) {
+                editor.toTextArea();
+                editor = null;
+            }
+
+            let textarea = document.getElementById("sqlSolutionArea");
+            textarea.value = solutionText;
+
             editor = CodeMirror.fromTextArea(textarea, {
                 mode: "text/x-sql",
                 lineNumbers: true,
-                theme: "eclipse",
-                readOnly: true
+                theme: "material",
+                readOnly: true,
+                lineWrapping: true,
+                viewportMargin: Infinity
             });
-        } else {
-            editor.setValue(solutionText);
+
+            modal.open();
         }
-    }
 
-    function closeSolutionModal() {
-        document.getElementById("solutionModal").style.display = "none";
-    }
-
-    function closeAlert(alertId) {
-        let alertElement = document.getElementById(alertId);
-        if (alertElement) {
-            alertElement.remove();
+        function closeAlert(alertId) {
+            let alertElement = document.getElementById(alertId);
+            if (alertElement) {
+                alertElement.remove();
+            }
         }
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(function () {
-            closeAlert("success-alert");
-            closeAlert("error-alert");
-        }, 5000);
-    });
-</script>
+    </script>
+}

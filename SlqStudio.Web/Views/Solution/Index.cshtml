@@ -1,360 +1,420 @@
 ﻿@model SlqStudio.ViewModel.Models.LabTaskViewModel
 @{
-    Layout = null;
+    Layout = "_Layout";
 }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SQL Challenge Platform</title>
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!-- Подключение CodeMirror -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.css">
+
 <style>
+    /* Основные стили */
     body {
-        background-color: #f8f9fa;
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
     }
+
+    main {
+        flex: 1;
+        padding: 20px 0;
+        height: calc(100vh - 64px); /* Высота с учетом шапки */
+        overflow: hidden;
+    }
+
     .container {
-        max-width: 1200px; /* Увеличиваем ширину контейнера */
+        width: 95%;
+        max-width: 1400px;
+        height: 100%;
     }
-    .task-block, .combined-block {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
+
+    /* Выравнивание высоты блоков */
+    .row-equal-height {
+        display: flex;
+        flex-wrap: wrap;
+        height: 100%;
+        margin-bottom: 0;
     }
-    .task-block {
-        border-right: 1px solid #ddd;
-        max-height: 100%;
-        overflow: auto;
-    }
-    .combined-block {
+
+    .row-equal-height > [class*="col"] {
         display: flex;
         flex-direction: column;
-        max-height: 100%;
-        overflow: auto;
+        height: 100%;
     }
-    .code-block, .result-table, .expected-result {
-        margin-top: 20px;
-        padding: 10px;
+
+    /* Стили для карточек */
+    .task-card, .editor-card {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
     }
-    .result-table, .expected-result {
-        flex-grow: 1;
-        overflow: auto;
+
+    .task-card .card-content {
+        padding: 24px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
-    .table-responsive {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
+
+    .task-content {
+        flex: 1;
         overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+        padding-right: 10px;
+        margin-top: 10px;
     }
-    /* Стилизация полос прокрутки */
+
+    /* Стили для редактора и результатов */
+    .editor-results-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .editor-section {
+        flex: 0 0 auto;
+        margin-bottom: 20px;
+    }
+
+    .results-section {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+
+    .CodeMirror {
+        height: 300px;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    /* Стили для таблиц */
+    .result-table {
+        margin-bottom: 20px;
+    }
+
+    /* Скроллбар */
     ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
+        width: 6px;
     }
+
     ::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
+        background-color: #90a4ae;
+        border-radius: 3px;
     }
-    ::-webkit-scrollbar-thumb:hover {
-        background: rgba(0, 0, 0, 0.3);
+
+    /* Фикс для Materialize */
+    .card .card-content {
+        padding: 24px;
     }
-    ::-webkit-scrollbar-track {
-        background: transparent;
+
+    .card-action {
+        flex: 0 0 auto;
+    }
+    /* Уведомления */
+    .alert-container {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        width: 80%;
+        max-width: 600px;
+    }
+
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .alert-close {
+        cursor: pointer;
+        font-size: 18px;
+        margin-left: 10px;
     }
 </style>
 
+<main>
+    <div class="container">
+        <div id="alert-container"></div>
 
+        <div class="row row-equal-height">
+            <!-- Блок с заданием -->
+            <div class="col s12 m12 l4">
+                <div class="card task-card">
+                    <div class="card-content">
+                        <span class="card-title">@Model.Title</span>
+                        <div class="task-content markdown-body">
+                            @Html.Raw(Model.Condition)
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-<div class="container mt-5">
-    <div id="alert-container" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999; padding: 10px 20px; text-align: center;">
-        <!-- Сообщения будут вставляться сюда -->
-    </div>
-    <div class="row">
-        <div class="col-md-4 d-flex flex-column">
-            <div class="task-block flex-grow-1">
-                <h4>@Model.Title</h4>
-                <p id="description">@Html.Raw(Model.Condition)</p>
+            <!-- Блок с редактором и результатами -->
+            <div class="col s12 m12 l8">
+                <div class="card editor-card">
+                    <div class="card-content" style="padding-bottom: 0;">
+                        <div class="editor-results-container">
+                            <!-- Редактор SQL -->
+                            <div class="editor-section">
+                                <h5>SQL Редактор</h5>
+                                <textarea id="sqlScript">
+CREATE FUNCTION dbo.GetLabCount()
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT COUNT(*) AS LabCount
+    FROM Labs
+);
+GO
+SELECT * FROM dbo.GetLabCount();
+                                </textarea>
+                                <button id="run-query" class="btn waves-effect waves-light blue" lab-id="@Model.Id">
+                                    <i class="material-icons left">play_arrow</i>Запустить
+                                </button>
+                            </div>
+
+                            <!-- Результаты -->
+                            <div class="results-section">
+                                <div id="query-result" class="result-table">
+                                    <h5>Результат:</h5>
+                                    <div class="responsive-table">
+                                        <table class="highlight">
+                                            <thead>
+                                            <tr>
+                                                <th>ProductID</th>
+                                                <th>ProductName</th>
+                                                <th>Category</th>
+                                                <th>Price</th>
+                                                <th>StockQuantity</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Smartphone</td>
+                                                <td>Электроника</td>
+                                                <td>1200</td>
+                                                <td>15</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div id="expected-result" class="result-table">
+                                    @if (Model.QueryData != null && Model.QueryData.Any())
+                                    {
+                                        <h5>Ожидаемый результат:</h5>
+                                        <div class="responsive-table">
+                                            <table class="highlight">
+                                                <thead>
+                                                <tr>
+                                                    @foreach (var column in Model.QueryData.First().Keys)
+                                                    {
+                                                        <th>@column</th>
+                                                    }
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                @foreach (var row in Model.QueryData)
+                                                {
+                                                    <tr>
+                                                        @foreach (var value in row.Values)
+                                                        {
+                                                            <td>@value</td>
+                                                        }
+                                                    </tr>
+                                                }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p>Нет данных для отображения.</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-action">
+                        <a asp-area="" asp-action="DetailsByWork" asp-controller="LabTasks" asp-route-id="@Model.LabWorkId" class="btn waves-effect waves-light blue">
+                            <i class="material-icons left">arrow_back</i>Закончить
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-8 d-flex flex-column">
-            <div class="combined-block flex-grow-1">
-                <div class="code-block">
-                    <h3>SQL Редактор</h3>
-                    <textarea id="sqlScript">
-                CREATE FUNCTION dbo.GetLabCount()
-                RETURNS TABLE
-                AS
-                RETURN
-                (
-	                SELECT COUNT(*) AS LabCount
-	                FROM Labs
-                );
-                GO
-                SELECT * FROM dbo.GetLabCount();
-                    </textarea>
-                    <button id="run-query" class="btn btn-primary mt-3" lab-id="@Model.Id">Запустить</button>
-                </div>
-                <div id="query-result" class="result-table table-responsive">
-                    <h4>Результат:</h4>
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th>ProductID</th>
-                            <th>ProductName</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>StockQuantity</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Smartphone</td>
-                            <td>Электроника</td>
-                            <td>1200</td>
-                            <td>15</td>
-                        </tr>
+    </div>
+</main>
 
-                        </tbody>
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/sql/sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/sql-hint.min.js"></script>
+
+    <script>
+        // Инициализация CodeMirror
+        var editor = CodeMirror.fromTextArea(document.getElementById("sqlScript"), {
+            mode: "text/x-sql",
+            lineNumbers: true,
+            theme: "material",
+            extraKeys: {
+                "Tab": function(cm) {
+                    if (cm.state.completionActive) {
+                        cm.state.completionActive.widget.pick();
+                    } else {
+                        cm.showHint({ completeSingle: false });
+                    }
+                }
+            },
+            hintOptions: {
+                tables: {
+                    "Products": ["ProductID", "ProductName", "Category", "Price", "StockQuantity"],
+                    "Orders": ["OrderID", "ProductID", "Quantity", "OrderDate", "CustomerID"]
+                }
+            }
+        });
+
+        // Обработчик кнопки "Запустить"
+        document.getElementById('run-query').addEventListener('click', function() {
+            var query = editor.getValue();
+            var taskId = this.getAttribute('lab-id');
+
+            // Показываем индикатор загрузки
+            showAlertMessage('info', 'Выполнение запроса...');
+
+            // Отправка запроса
+            fetch("http://localhost:5051/Solution/ValidateSqlSyntax", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ sqlQuery: query })
+            })
+                .then(response => response.json())
+                .then(validateResponse => {
+                    if (validateResponse.isValid) {
+                        return fetch("http://localhost:5051/Solution/CompareSql", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ taskId: taskId, sqlQuery: query })
+                        });
+                    } else {
+                        showAlertMessage(false, "Ошибка в SQL: " + validateResponse.error);
+                        displayErrorResult(validateResponse.error);
+                        throw new Error("Invalid SQL");
+                    }
+                })
+                .then(response => response.json())
+                .then(compareResponse => {
+                    if (compareResponse.dataIsEqual) {
+                        showAlertMessage(true, "Ответ верный!");
+                    } else {
+                        showAlertMessage(false, "Ответ неверный!");
+                    }
+                    displayResultTables(compareResponse);
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    if (!error.message.includes("Invalid SQL")) {
+                        showAlertMessage(false, "Произошла ошибка при выполнении запроса");
+                    }
+                });
+        });
+
+        function displayResultTables(compareResponse) {
+            const queryData1 = compareResponse.queryData1 || [];
+            const queryData2 = compareResponse.queryData2 || [];
+
+            const tableHeaders1 = Object.keys(queryData1[0] || {}).map(key => `<th>${key}</th>`).join('');
+            const tableHeaders2 = Object.keys(queryData2[0] || {}).map(key => `<th>${key}</th>`).join('');
+
+            const queryData1Rows = queryData1
+                .map(row => `<tr>${Object.values(row).map(value => `<td>${value}</td>`).join('')}</tr>`)
+                .join('');
+
+            const queryData2Rows = queryData2
+                .map(row => `<tr>${Object.values(row).map(value => `<td>${value}</td>`).join('')}</tr>`)
+                .join('');
+
+            document.getElementById('query-result').innerHTML = `
+                <h5>Результат:</h5>
+                <div class="responsive-table">
+                    <table class="highlight">
+                        <thead>
+                            <tr>${tableHeaders1}</tr>
+                        </thead>
+                        <tbody>${queryData1Rows}</tbody>
                     </table>
                 </div>
-                <div id="expected-result" class="expected-result table-responsive">
-                    @if (Model.QueryData != null && Model.QueryData.Any())
-                    {
-                        <div id="expected-result" class="expected-result table-responsive">
-                            <h4>Ожидаемый результат:</h4>
-                            <table class="table table-bordered">
-                                <thead>
-                                <tr>
-                                    @foreach (var column in Model.QueryData.First().Keys)
-                                    {
-                                        <th>@column</th>
-                                    }
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach (var row in Model.QueryData)
-                                {
-                                    <tr>
-                                        @foreach (var value in row.Values)
-                                        {
-                                            <td>@value</td>
-                                        }
-                                    </tr>
-                                }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <p>Нет данных для отображения.</p>
-                    }
+            `;
+
+            document.getElementById('expected-result').innerHTML = `
+                <h5>Ожидаемый результат:</h5>
+                <div class="responsive-table">
+                    <table class="highlight">
+                        <thead>
+                            <tr>${tableHeaders2}</tr>
+                        </thead>
+                        <tbody>${queryData2Rows}</tbody>
+                    </table>
                 </div>
-                <a asp-area="" asp-action="DetailsByWork" asp-controller="LabTasks" asp-route-id="@Model.LabWorkId" class="btn btn-primary mt-3 d-inline-block">Закончить</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/sql/sql.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/sql-hint.min.js"></script>
-<script>
-    var editor = CodeMirror.fromTextArea(document.getElementById("sqlScript"), {
-        mode: "text/x-sql",
-        lineNumbers: true,
-        theme: "default",
-        extraKeys: {
-            "Tab": function(cm) {
-                if (cm.state.completionActive) {
-                    cm.state.completionActive.widget.pick();
-                } else {
-                    cm.showHint({ completeSingle: false });
-                }
-            }
-        },
-        hintOptions: {
-            tables: {
-                "Products": [
-                    "ProductID",
-                    "ProductName",
-                    "Category",
-                    "Price",
-                    "StockQuantity"
-                ],
-                "Orders": [
-                    "OrderID",
-                    "ProductID",
-                    "Quantity",
-                    "OrderDate",
-                    "CustomerID"
-                ]
-            }
+            `;
         }
-    });
 
-    editor.on("inputRead", function(cm, change) {
-        if (change.text[0] !== " ") {
-            cm.showHint({ completeSingle: false });
+        function displayErrorResult(error) {
+            document.getElementById('query-result').innerHTML = `
+                <h5>Ошибка:</h5>
+                <div class="card-panel red lighten-4">
+                    ${error}
+                </div>
+            `;
         }
-    });
 
-    
-    document.getElementById('run-query').addEventListener('click', function () {
-        var query = editor.getValue();
-
-        // Отправка запроса на ValidateSqlSyntax
-        fetch("http://localhost:5051/Solution/ValidateSqlSyntax", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sqlQuery: query })
-        })
-            .then(response => response.json())
-            .then(validateResponse => {
-                if (validateResponse.isValid) {
-                    // Если запрос валиден, отправляем запрос на CompareSql
-                    const taskId = document.getElementById('run-query').getAttribute('lab-id'); // Замените на нужный ID задачи
-                    fetch("http://localhost:5051/Solution/CompareSql", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ taskId: taskId, sqlQuery: query })
-                    })
-                        .then(response => response.json())
-                        .then(compareResponse => {
-                            // Проверяем и выводим сообщение
-                            if (compareResponse.dataIsEqual) {
-                                showAlertMessage(true, "Ответ верный!");
-                            } else {
-                                showAlertMessage(false, "Ответ неверный!");
-                            }
-                            displayResultTables(compareResponse);
-                        })
-                        .catch(error => {
-                            console.error('Ошибка CompareSql:', error);
-                            document.getElementById('query-result').innerHTML = `
-			                            <h4>Ошибка CompareSql:</h4>
-			                            <pre>${error.message}</pre>
-			                        `;
-                        });
-                } else {
-                    // Если запрос невалиден, выводим ошибку
-                    console.error('Ошибка ValidateSqlSyntax:', validateResponse.error);
-                    document.getElementById('query-result').innerHTML = `
-			                    <h4>Ошибка в SQL:</h4>
-			                    <table class="table table-bordered">
-			                        <thead>
-			                            <tr>
-			                                <th>Ошибка</th>
-			                            </tr>
-			                        </thead>
-			                        <tbody>
-			                            <tr>
-			                                <td>${validateResponse.error}</td>
-			                            </tr>
-			                        </tbody>
-			                    </table>
-			                `;
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка ValidateSqlSyntax:', error);
-                document.getElementById('query-result').innerHTML = `
-			                <h4>Ошибка ValidateSqlSyntax:</h4>
-			                <pre>${error.message}</pre>
-			            `;
+        function showAlertMessage(isSuccess, message) {
+            M.toast({
+                html: message,
+                classes: isSuccess ? 'green' : 'red',
+                displayLength: 4000
             });
-    });
-
-    function displayResultTables(compareResponse) {
-        const queryData1 = compareResponse.queryData1 || [];
-        const queryData2 = compareResponse.queryData2 || [];
-
-        const tableHeaders1 = Object.keys(queryData1[0] || {}).map(key => `<th>${key}</th>`).join('');
-        const tableHeaders2 = Object.keys(queryData2[0] || {}).map(key => `<th>${key}</th>`).join('');
-
-        const queryData1Rows = queryData1
-            .map(row => `<tr>${Object.values(row).map(value => `<td>${value}</td>`).join('')}</tr>`)
-            .join('');
-
-        const queryData2Rows = queryData2
-            .map(row => `<tr>${Object.values(row).map(value => `<td>${value}</td>`).join('')}</tr>`)
-            .join('');
-
-        document.getElementById('query-result').innerHTML = `
-		        <h4>Результат:</h4>
-		        <table class="table table-bordered">
-		            <thead>
-		                <tr>${tableHeaders1}</tr>
-		            </thead>
-		            <tbody>${queryData1Rows}</tbody>
-		        </table>
-		    `;
-
-        document.getElementById('expected-result').innerHTML = `
-		        <h4>Ожидаемый результат:</h4>
-		        <table class="table table-bordered">
-		            <thead>
-		                <tr>${tableHeaders2}</tr>
-		            </thead>
-		            <tbody>${queryData2Rows}</tbody>
-		        </table>
-		    `;
-    }
-
-    function showAlertMessage(isSuccess, message) {
-        // Получаем контейнер для сообщений
-        const alertContainer = document.getElementById("alert-container");
-
-        // Проверяем, есть ли уже сообщение, если да - удаляем его
-        let existingMessage = document.getElementById("query-result-message");
-        if (existingMessage) {
-            existingMessage.remove();
         }
 
-        // Создаем контейнер для сообщения
-        const alertMessage = document.createElement("div");
-        alertMessage.id = "query-result-message";
-        alertMessage.classList.add("alert", "alert-dismissible", "mt-3");
-
-        // Сообщение о валидности ответа
-        if (isSuccess) {
-            // Зеленое сообщение о верном ответе
-            alertMessage.classList.add("alert-success");
-            alertMessage.textContent = message;
-        } else {
-            // Красное сообщение о неверном ответе
-            alertMessage.classList.add("alert-danger");
-            alertMessage.textContent = message;
-        }
-
-        // Добавляем кнопку для закрытия сообщения
-        const closeButton = document.createElement("button");
-        closeButton.type = "button";
-        closeButton.classList.add("close");
-        closeButton.setAttribute("data-dismiss", "alert");
-        closeButton.setAttribute("aria-label", "Close");
-
-        const closeIcon = document.createElement("span");
-        closeIcon.setAttribute("aria-hidden", "true");
-        closeIcon.textContent = "×";
-
-        closeButton.appendChild(closeIcon);
-        alertMessage.appendChild(closeButton);
-
-        // Вставляем сообщение в контейнер
-        alertContainer.appendChild(alertMessage);
-
-        // Обработчик для закрытия сообщения
-        closeButton.addEventListener("click", function () {
-            alertMessage.remove(); // Удаляем сообщение при нажатии на кнопку
+        // Обновляем размеры редактора после загрузки
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                editor.refresh();
+            }, 100);
         });
-    }
-
-</script>
+    </script>
+}

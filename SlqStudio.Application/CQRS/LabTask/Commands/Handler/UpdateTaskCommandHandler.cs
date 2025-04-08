@@ -17,6 +17,7 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand>
             taskItem.Title = request.Title;
             taskItem.Condition = request.Condition;
             taskItem.SolutionExample = request.SolutionExample;
+            taskItem.LabWorkId = request.LabWorkId;
             await _context.SaveChangesAsync(ct);
         }
         return Unit.Value;

@@ -1,16 +1,168 @@
 ﻿@model SlqStudio.Persistence.Models.LabWork
-<div class="container">
-    <h2>Lab Work Details</h2>
-    <dl class="row">
-        <dt class="col-sm-2">Name</dt>
-        <dd class="col-sm-10">@Model.Name</dd>
-        <dt class="col-sm-2">Description</dt>
-        <dd class="col-sm-10">@Model.Description</dd>
-        <dt class="col-sm-2">Number</dt>
-        <dd class="col-sm-10">@Model.Number</dd>
-        <dt class="col-sm-2">Course</dt>
-        <dd class="col-sm-10">@Model.Course?.Name</dd>
-    </dl>
-    <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.Id })">Edit</a>
-    <a class="btn btn-secondary" href="@Url.Action("Index")">Back to List</a>
-</div>
+@{
+    Layout = "_Layout";
+    var isAdmin = Context.Session.GetString("UserRole") == "EditingTeacher";
+}
+
+<main class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="row valign-wrapper" style="margin-bottom: 0;">
+                        <div class="col s8">
+                            <span class="card-title">Детали лабораторной работы</span>
+                        </div>
+                        @if(isAdmin)
+                        {
+                            <div class="col s4 right-align">
+                                <a href="@Url.Action("Edit", new { id = Model.Id })" 
+                                   class="btn waves-effect waves-light light-blue">
+                                    <i class="material-icons left">edit</i>Редактировать
+                                </a>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="divider" style="margin: 20px 0;"></div>
+
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="detail-card">
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons light-blue-text">title</i>
+                                        <span>Название:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        @Model.Name
+                                    </div>
+                                </div>
+
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons light-blue-text">description</i>
+                                        <span>Описание:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        @Model.Description
+                                    </div>
+                                </div>
+
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons light-blue-text">format_list_numbered</i>
+                                        <span>Номер:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        @Model.Number
+                                    </div>
+                                </div>
+
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons light-blue-text">school</i>
+                                        <span>Курс:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        @if(Model.Course != null)
+                                        {
+                                            <span class="chip light-blue lighten-1 white-text">
+                                                <i class="material-icons tiny">school</i>
+                                                @Model.Course.Name
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 30px;">
+                        <div class="col s12">
+                            <a href="@Url.Action("Index")" class="btn waves-effect waves-light grey">
+                                <i class="material-icons left">arrow_back</i>Назад
+                            </a>
+                            @if(isAdmin)
+                            {
+                                <a href="@Url.Action("DetailsByWork", "LabTasks", new { id = Model.Id })" 
+                                   class="btn waves-effect waves-light light-blue right">
+                                    <i class="material-icons left">assignment</i>Задания
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+    <style>
+        .detail-card {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .detail-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            flex: 0 0 200px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .detail-label i {
+            margin-right: 10px;
+        }
+        
+        .detail-value {
+            flex: 1;
+            padding-left: 10px;
+        }
+        
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            height: 32px;
+            padding: 0 12px;
+            border-radius: 16px;
+            font-size: 13px;
+        }
+        
+        .chip i.material-icons {
+            margin-right: 5px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            margin-right: 10px;
+        }
+        
+        @@media (max-width: 600px) {
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .detail-label {
+                margin-bottom: 5px;
+            }
+            
+            .detail-value {
+                padding-left: 0;
+                width: 100%;
+            }
+        }
+    </style>

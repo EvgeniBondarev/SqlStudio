@@ -1,27 +1,154 @@
 ﻿@model SlqStudio.Application.CQRS.LabWork.Commands.CreateLabWorkCommand
-<div class="container">
-    <h2>Create Lab Work</h2>
-    <form asp-action="Create" method="post">
-        <div class="form-group">
-            <label asp-for="Name"></label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+@{
+    Layout = "_Layout";
+}
+
+<main class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="row valign-wrapper" style="margin-bottom: 0;">
+                        <div class="col s8">
+                            <span class="card-title">Создание лабораторной работы</span>
+                        </div>
+                        <div class="col s4 right-align">
+                            <a href="@Url.Action("Index")" class="btn waves-effect waves-light grey">
+                                <i class="material-icons left">arrow_back</i>Назад
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="divider" style="margin: 20px 0;"></div>
+
+                    <form asp-action="Create" method="post">
+                        <!-- Поле Name -->
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix light-blue-text">title</i>
+                                <input asp-for="Name" type="text" class="validate">
+                                <label asp-for="Name">Название</label>
+                                <span class="helper-text red-text" data-error="wrong" data-success="right"
+                                      asp-validation-for="Name"></span>
+                            </div>
+                        </div>
+
+                        <!-- Поле Description -->
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix light-blue-text">description</i>
+                                <textarea asp-for="Description" class="materialize-textarea validate"></textarea>
+                                <label asp-for="Description">Описание</label>
+                                <span class="helper-text red-text" asp-validation-for="Description"></span>
+                            </div>
+                        </div>
+
+                        <!-- Поле Number -->
+                        <div class="row">
+                            <div class="input-field col s12 m6">
+                                <i class="material-icons prefix light-blue-text">format_list_numbered</i>
+                                <input asp-for="Number" type="number" class="validate">
+                                <label asp-for="Number">Номер работы</label>
+                                <span class="helper-text red-text" asp-validation-for="Number"></span>
+                            </div>
+                        </div>
+
+                        <!-- Выбор курса -->
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix light-blue-text">school</i>
+                                <label class="active">Курс</label>
+                                <div class="custom-radio-group scrollable-radio-group">
+                                    @foreach (var item in (SelectList)ViewBag.Courses)
+                                    {
+                                        <p>
+                                            <label>
+                                                <input type="radio" asp-for="CourseId" value="@item.Value" class="with-gap" />
+                                                <span>@item.Text</span>
+                                            </label>
+                                        </p>
+                                    }
+                                </div>
+                                <span class="helper-text red-text" asp-validation-for="CourseId"></span>
+                            </div>
+                        </div>
+
+                        <!-- Кнопки действий -->
+                        <div class="row">
+                            <div class="col s12 right-align">
+                                <button type="submit" class="btn waves-effect waves-light light-blue">
+                                    <i class="material-icons left">check</i>Создать
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label asp-for="Description"></label>
-            <textarea asp-for="Description" class="form-control"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Number"></label>
-            <input asp-for="Number" class="form-control" />
-            <span asp-validation-for="Number" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label>Course</label>
-            @Html.DropDownList("CourseId", (SelectList)ViewBag.Courses, "Select Course", new { @class = "form-control" })
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Create</button>
-        <a class="btn btn-secondary mt-3" href="@Url.Action("Index")">Cancel</a>
-    </form>
-</div>
+    </div>
+</main>
+
+    <style>
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .input-field {
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .input-field label:not(.active) {
+            transform: translateY(0) scale(0.8);
+            transform-origin: 0 0;
+        }
+
+        .input-field .prefix ~ label {
+            margin-left: 3rem;
+        }
+
+        .custom-radio-group {
+            margin-left: 3rem;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+
+        .custom-radio-group p {
+            margin: 10px 0;
+        }
+
+        [type="radio"].with-gap:checked + span:before {
+            border: 2px solid #0288d1;
+        }
+
+        [type="radio"].with-gap:checked + span:after {
+            background-color: #0288d1;
+            border: 2px solid #0288d1;
+        }
+
+        .btn {
+            margin-left: 10px;
+        }
+
+        .helper-text {
+            margin-left: 3rem;
+        }
+    </style>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация полей ввода
+            M.updateTextFields();
+
+            // Инициализация radio buttons
+            var radioElems = document.querySelectorAll('[type="radio"]');
+            M.FormSelect.init(radioElems);
+        });
+    </script>
+}

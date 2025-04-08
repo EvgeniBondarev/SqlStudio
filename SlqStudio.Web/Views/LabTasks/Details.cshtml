@@ -1,18 +1,228 @@
 ﻿@model SlqStudio.Persistence.Models.LabTask
-<div class="container">
-    <h2>Lab Task Details</h2>
-    <dl class="row">
-        <dt class="col-sm-2">Number</dt>
-        <dd class="col-sm-10">@Model.Number</dd>
-        <dt class="col-sm-2">Title</dt>
-        <dd class="col-sm-10">@Model.Title</dd>
-        <dt class="col-sm-2">Condition</dt>
-        <dd class="col-sm-10">@Model.Condition</dd>
-        <dt class="col-sm-2">Solution Example</dt>
-        <dd class="col-sm-10">@Model.SolutionExample</dd>
-        <dt class="col-sm-2">Lab Work</dt>
-        <dd class="col-sm-10">@Model.LabWork?.Name</dd>
-    </dl>
-    <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.Id })">Edit</a>
-    <a class="btn btn-secondary" href="@Url.Action("Index")">Back to List</a>
-</div>
+@{
+    Layout = "_Layout";
+    var isAdmin = Context.Session.GetString("UserRole") == "EditingTeacher";
+}
+
+<main class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="row valign-wrapper" style="margin-bottom: 0;">
+                        <div class="col s8">
+                            <span class="card-title">Детали задания</span>
+                        </div>
+                        @if(isAdmin)
+                        {
+                            <div class="col s4 right-align">
+                                <a href="@Url.Action("Edit", new { id = Model.Id })"
+                                   class="btn waves-effect waves-light light-blue">
+                                    <i class="material-icons left">edit</i>Редактировать
+                                </a>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="divider" style="margin: 20px 0;"></div>
+
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="detail-card">
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons light-blue-text">format_list_numbered</i>
+                                        <span>Номер:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        @Model.Number
+                                    </div>
+                                </div>
+
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons light-blue-text">title</i>
+                                        <span>Название:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        @Model.Title
+                                    </div>
+                                </div>
+
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons light-blue-text">description</i>
+                                        <span>Условие:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        <div class="html-content card-panel grey lighten-5" style="padding: 20px; border-radius: 4px;">
+                                            @Html.Raw(Model.Condition)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons light-blue-text">code</i>
+                                        <span>Пример решения:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        <pre class="card-panel grey lighten-5" style="padding: 20px; border-radius: 4px; overflow-x: auto;">@Model.SolutionExample</pre>
+                                    </div>
+                                </div>
+
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons light-blue-text">work</i>
+                                        <span>Лабораторная работа:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        @if(Model.LabWork != null)
+                                        {
+                                            <span class="chip light-blue lighten-1 white-text">
+                                                <i class="material-icons tiny">work</i>
+                                                @Model.LabWork.Name
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 30px;">
+                        <div class="col s12">
+                            <a href="@Url.Action("Index")" class="btn waves-effect waves-light grey">
+                                <i class="material-icons left">arrow_back</i>Назад к списку
+                            </a>
+                            @if(isAdmin)
+                            {
+                                <a href="@Url.Action("Details", "LabWorks", new { id = Model.LabWorkId })"
+                                   class="btn waves-effect waves-light light-blue right">
+                                    <i class="material-icons left">info</i>К лабораторной работе
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 500;
+    }
+
+    .detail-card {
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    .detail-row {
+        display: flex;
+        align-items: flex-start;
+        padding: 12px 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        flex: 0 0 200px;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+    }
+
+    .detail-label i {
+        margin-right: 10px;
+    }
+
+    .detail-value {
+        flex: 1;
+        padding-left: 10px;
+    }
+
+    .html-content {
+        font-family: 'Roboto', sans-serif;
+        line-height: 1.6;
+        width: 100%;
+    }
+
+    .html-content p {
+        margin-bottom: 1rem;
+    }
+
+    .html-content ul, .html-content ol {
+        margin-left: 20px;
+        margin-bottom: 1rem;
+    }
+
+    .html-content table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .html-content table, .html-content th, .html-content td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .html-content th {
+        background-color: #f2f2f2;
+    }
+
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: 'Courier New', monospace;
+        line-height: 1.4;
+        margin: 0;
+    }
+
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        height: 32px;
+        padding: 0 12px;
+        border-radius: 16px;
+        font-size: 13px;
+    }
+
+    .chip i.material-icons {
+        margin-right: 5px;
+        font-size: 16px;
+    }
+
+    .btn {
+        margin-right: 10px;
+    }
+
+    @@media (max-width: 600px) {
+        .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .detail-label {
+            margin-bottom: 5px;
+            flex: 1;
+        }
+
+        .detail-value {
+            padding-left: 0;
+            width: 100%;
+        }
+
+        .html-content, pre {
+            padding: 10px !important;
+        }
+    }
+</style>

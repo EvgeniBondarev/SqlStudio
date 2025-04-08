@@ -27,6 +27,7 @@ public class LabWorksController : Controller
         }
 
         // GET: /LabWorks/Details/5
+        [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> Details(int id)
         {
             var labWork = await _mediator.Send(new GetLabWorkByIdQuery(id));
@@ -47,6 +48,7 @@ public class LabWorksController : Controller
 
         // POST: /LabWorks/Create
         [HttpPost]
+        [Authorize(Roles = "editingteacher")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateLabWorkCommand command)
         {
@@ -62,19 +64,25 @@ public class LabWorksController : Controller
         }
 
         // GET: /LabWorks/Edit/5
+        [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> Edit(int id)
         {
             var labWork = await _mediator.Send(new GetLabWorkByIdQuery(id));
             if (labWork == null)
                 return NotFound();
+            
+            // Если модель не прошла валидацию – снова подгружаем список курсов
+            var courses = await _mediator.Send(new GetAllCoursesQuery());
+            ViewBag.Courses = new SelectList(courses, "Id", "Name");
 
-            var command = new UpdateLabWorkCommand(labWork.Id, labWork.Name, labWork.Description, labWork.Number);
+            var command = new UpdateLabWorkCommand(labWork.Id, labWork.Name, labWork.Description, labWork.Number, labWork.CourseId);
             return View(command);
         }
 
         // POST: /LabWorks/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> Edit(int id, UpdateLabWorkCommand command)
         {
             if (id != command.Id)
@@ -89,6 +97,7 @@ public class LabWorksController : Controller
         }
 
         // GET: /LabWorks/Delete/5
+        [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> Delete(int id)
         {
             var labWork = await _mediator.Send(new GetLabWorkByIdQuery(id));
@@ -100,6 +109,7 @@ public class LabWorksController : Controller
         // POST: /LabWorks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _mediator.Send(new DeleteLabWorkCommand(id));

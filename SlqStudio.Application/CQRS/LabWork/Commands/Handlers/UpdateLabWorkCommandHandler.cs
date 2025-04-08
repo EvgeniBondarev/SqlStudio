@@ -16,6 +16,7 @@ public class UpdateLabWorkCommandHandler : IRequestHandler<UpdateLabWorkCommand>
             labWork.Name = request.Name;
             labWork.Description = request.Description;
             labWork.Number = request.Number;
+            labWork.CourseId = request.CourseId;
             await _context.SaveChangesAsync(ct);
         }
         return Unit.Value;

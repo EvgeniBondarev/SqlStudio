@@ -1,20 +1,160 @@
 ﻿@model SlqStudio.Persistence.Models.LabWork
-<div class="container">
-    <h2>Delete Lab Work</h2>
-    <p>Are you sure you want to delete this lab work?</p>
-    <dl class="row">
-        <dt class="col-sm-2">Name</dt>
-        <dd class="col-sm-10">@Model.Name</dd>
-        <dt class="col-sm-2">Description</dt>
-        <dd class="col-sm-10">@Model.Description</dd>
-        <dt class="col-sm-2">Number</dt>
-        <dd class="col-sm-10">@Model.Number</dd>
-        <dt class="col-sm-2">Course</dt>
-        <dd class="col-sm-10">@Model.Course?.Name</dd>
-    </dl>
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn btn-danger">Delete</button>
-        <a class="btn btn-secondary" href="@Url.Action("Index")">Cancel</a>
-    </form>
-</div>
+@{
+    Layout = "_Layout";
+}
+
+<main class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="row valign-wrapper" style="margin-bottom: 0;">
+                        <div class="col s8">
+                            <span class="card-title red-text text-darken-2">Подтверждение удаления</span>
+                        </div>
+                    </div>
+
+                    <div class="divider" style="margin: 20px 0;"></div>
+
+                    <p class="flow-text">Вы уверены, что хотите удалить эту лабораторную работу?</p>
+
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="detail-card">
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons red-text">title</i>
+                                        <span>Название:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        @Model.Name
+                                    </div>
+                                </div>
+
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons red-text">description</i>
+                                        <span>Описание:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        @Model.Description
+                                    </div>
+                                </div>
+
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons red-text">format_list_numbered</i>
+                                        <span>Номер:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        @Model.Number
+                                    </div>
+                                </div>
+
+                                <div class="detail-row">
+                                    <div class="detail-label">
+                                        <i class="material-icons red-text">school</i>
+                                        <span>Курс:</span>
+                                    </div>
+                                    <div class="detail-value">
+                                        @if(Model.Course != null)
+                                        {
+                                            <span class="chip red lighten-1 white-text">
+                                                <i class="material-icons tiny">school</i>
+                                                @Model.Course.Name
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 30px;">
+                        <div class="col s12 right-align">
+                            <form asp-action="Delete">
+                                <input type="hidden" asp-for="Id" />
+                                <button type="submit" class="btn waves-effect waves-light red darken-2">
+                                    <i class="material-icons left">delete_forever</i>Удалить
+                                </button>
+                                <a href="@Url.Action("Index")" class="btn waves-effect waves-light grey">
+                                    <i class="material-icons left">cancel</i>Отмена
+                                </a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+    <style>
+        .detail-card {
+            background-color: #ffebee;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #ef9a9a;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            flex: 0 0 200px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .detail-label i {
+            margin-right: 10px;
+        }
+
+        .detail-value {
+            flex: 1;
+            padding-left: 10px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            height: 32px;
+            padding: 0 12px;
+            border-radius: 16px;
+            font-size: 13px;
+        }
+
+        .chip i.material-icons {
+            margin-right: 5px;
+            font-size: 16px;
+        }
+
+        .btn {
+            margin-left: 10px;
+        }
+
+        @@media (max-width: 600px) {
+        .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .detail-label {
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            padding-left: 0;
+            width: 100%;
+        }
+        }
+    </style>

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SlqStudio.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b00161d81eb2a3c23e0b15bb441e098efe3fa1f6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5bd66c9e21576e5f077233393c814a8bfc21b584")]
 [assembly: System.Reflection.AssemblyProductAttribute("SlqStudio.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SlqStudio.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

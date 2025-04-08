@@ -3,31 +3,115 @@
 @model IEnumerable<SlqStudio.Persistence.Models.LabTask>
 @{
     var comparisonResults = Context.Session.GetObjectFromJson<List<ComparisonResult>>("ComparisonResults") ?? new List<ComparisonResult>();
+    Layout = "_Layout";
 }
-<div class="container">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Номер</th>
-                <th>Название</th>
-                <th>Лабораторная работа</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var task in Model)
-        {
-            var result = comparisonResults.FirstOrDefault(r => r.TaskId == task.Id);
-            string rowClass = result != null ? (result.Result ? "table-success" : "table-danger") : "";
 
-            <tr onclick="window.location.href='@Url.Action("Index", "Solution", new { taskId = task.Id })'" style="cursor:pointer;" class="@rowClass">
-                <td>@task.Number</td>
-                <td>@task.Title</td>
-                <td>@task.LabWork?.Name</td>
-            </tr>
+<main class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="row valign-wrapper" style="margin-bottom: 0;">
+                        <div class="col s8">
+                            <span class="card-title">Ход выполнения работ</span>
+                        </div>
+                        <div class="col s4 right-align">
+                            <a asp-area="" asp-action="Index" asp-controller="Report"
+                               class="btn waves-effect waves-light light-blue">
+                                <i class="material-icons left">done_all</i>Закончить
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="divider" style="margin: 20px 0;"></div>
+
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="responsive-table-container">
+                                <table class="highlight striped">
+                                    <thead class="light-blue lighten-2 white-text">
+                                    <tr>
+                                        <th><i class="material-icons">format_list_numbered</i> Номер</th>
+                                        <th><i class="material-icons">title</i> Название</th>
+                                        <th><i class="material-icons">work</i> Лабораторная работа</th>
+                                        <th><i class="material-icons">info</i> Статус</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var task in Model)
+                                    {
+                                        var result = comparisonResults.FirstOrDefault(r => r.TaskId == task.Id);
+                                        string rowClass = result != null ? (result.Result ? "green lighten-4" : "red lighten-4") : "";
+                                        string statusIcon = result != null ? (result.Result ? "check_circle" : "error") : "help_outline";
+                                        string statusText = result != null ? (result.Result ? "Выполнено" : "Ошибка") : "Не начато";
+
+                                        <tr onclick="window.location.href='@Url.Action("Index", "Solution", new { taskId = task.Id })'" style="cursor:pointer;" class="@rowClass">
+                                            <td>@task.Number</td>
+                                            <td>@task.Title</td>
+                                            <td>
+                                                @if(task.LabWork != null)
+                                                {
+                                                    <span class="chip light-blue lighten-1 white-text">
+                                                        @task.LabWork.Name
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="valign-wrapper">
+                                                    <i class="material-icons left">@statusIcon</i>
+                                                    @statusText
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+    <style>
+        .responsive-table-container {
+            overflow-x: auto;
+            margin: 20px 0;
         }
-        </tbody>
-        
-    </table>
-    <br/>
-    <a asp-area="" asp-action="Index" asp-controller="Report" class="btn btn-primary mt-3 d-inline-block">Закончить</a>
-</div>
+
+        table.highlight tbody tr:hover {
+            background-color: #e1f5fe !important;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            height: 32px;
+            padding: 0 12px;
+            border-radius: 16px;
+            font-size: 13px;
+        }
+
+        .chip i.material-icons {
+            margin-right: 5px;
+            font-size: 16px;
+        }
+
+        .valign-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        th i.material-icons {
+            vertical-align: bottom;
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        td i.material-icons.left {
+            margin-right: 8px;
+        }
+    </style>
