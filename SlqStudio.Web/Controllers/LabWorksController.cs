@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SlqStudio.Application.CQRS.Course.Queries;
@@ -35,6 +36,7 @@ public class LabWorksController : Controller
         }
 
         // GET: /LabWorks/Create
+        [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> Create()
         {
             // Получаем список курсов для dropdown

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SlqStudio.Application.CQRS.LabTask.Commands;
@@ -36,6 +37,7 @@ namespace SlqStudio.Controllers;
             return View(labWorkItem.Tasks);
         }
 
+        
         // GET: /LabTasks/Create
         public async Task<IActionResult> Create()
         {

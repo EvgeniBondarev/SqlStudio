@@ -96,6 +96,11 @@ var jwtSettings = new JwtSettings
     Audience = builder.Configuration["Jwt:Audience"],
     ExpirationMinutes = 30
 };
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("EditingTeacherPolicy", policy =>
+        policy.RequireRole("editingteacher"));
+});
 builder.Services.AddSingleton(jwtSettings);
 
 builder.Services.AddHttpClient();
