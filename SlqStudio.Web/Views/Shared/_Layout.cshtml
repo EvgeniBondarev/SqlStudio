@@ -109,13 +109,11 @@
             <a href="/" class="brand-logo">SlqStudio.Web</a>
             <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             <ul class="right hide-on-med-and-down">
-                <li><a asp-controller="Home" asp-action="Index"><i class="material-icons left">home</i>Home</a></li>
-                <li><a asp-controller="Home" asp-action="Privacy"><i class="material-icons left">security</i>Privacy</a></li>
-                <li><a asp-controller="LabWorks" asp-action="LabList"><i class="material-icons left">work</i>Работы</a></li>
                 <li>
                     <form method="post" asp-action="Logout" asp-controller="Auth" class="logout-form">
-                        <button type="submit" class="btn waves-effect waves-light red">
-                            <i class="material-icons left">exit_to_app</i>Выйти
+                        <button type="submit" class="btn waves-effect waves-light red" style="display: flex; align-items: center;">
+                            <i class="material-icons" style="margin-right: 8px;">exit_to_app</i>
+                            <span>Выйти</span>
                         </button>
                     </form>
                 </li>
@@ -125,9 +123,6 @@
 
     <!-- Mobile sidenav -->
     <ul class="sidenav" id="mobile-demo">
-        <li><a asp-controller="Home" asp-action="Index"><i class="material-icons">home</i>Home</a></li>
-        <li><a asp-controller="Home" asp-action="Privacy"><i class="material-icons">security</i>Privacy</a></li>
-        <li><a asp-controller="LabWorks" asp-action="LabList"><i class="material-icons">work</i>Работы</a></li>
         <li>
             <form method="post" asp-action="Logout" asp-controller="Auth">
                 <button type="submit" class="btn waves-effect waves-light red">

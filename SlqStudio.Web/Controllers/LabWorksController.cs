@@ -45,8 +45,7 @@ public class LabWorksController : Controller
             ViewBag.Courses = new SelectList(courses, "Id", "Name");
             return View();
         }
-
-        // POST: /LabWorks/Create
+        
         [HttpPost]
         [Authorize(Roles = "editingteacher")]
         [ValidateAntiForgeryToken]
@@ -57,13 +56,11 @@ public class LabWorksController : Controller
                 await _mediator.Send(command);
                 return RedirectToAction(nameof(Index));
             }
-            // Если модель не прошла валидацию – снова подгружаем список курсов
             var courses = await _mediator.Send(new GetAllCoursesQuery());
             ViewBag.Courses = new SelectList(courses, "Id", "Name");
             return View(command);
         }
-
-        // GET: /LabWorks/Edit/5
+        
         [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -71,7 +68,6 @@ public class LabWorksController : Controller
             if (labWork == null)
                 return NotFound();
             
-            // Если модель не прошла валидацию – снова подгружаем список курсов
             var courses = await _mediator.Send(new GetAllCoursesQuery());
             ViewBag.Courses = new SelectList(courses, "Id", "Name");
 

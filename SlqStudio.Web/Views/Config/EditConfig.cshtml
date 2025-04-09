@@ -1,0 +1,111 @@
+﻿@using Newtonsoft.Json.Linq
+@model JObject
+@{
+    ViewData["Title"] = "Редактирование конфигурации";
+    Layout = "_Layout";
+}
+
+<main class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="row valign-wrapper" style="margin-bottom: 0;">
+                        <div class="col s8">
+                            <span class="card-title">Редактирование конфигурации</span>
+                        </div>
+                        <div class="col s4 right-align">
+                            <a asp-controller="Home" asp-action="Index" class="btn waves-effect waves-light grey">
+                                <i class="material-icons left">arrow_back</i>Назад
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="divider" style="margin: 20px 0;"></div>
+
+                    <form asp-action="SaveConfig" method="post">
+                        @foreach (var configSection in Model.Properties())
+                        {
+                            <div class="section mb-3">
+                                <h5 class="light-blue-text">@configSection.Name</h5>
+
+                                @if (configSection.Value.Type == JTokenType.Object)
+                                {
+                                    var obj = (JObject)configSection.Value;
+                                    foreach (var subProp in obj.Properties())
+                                    {
+                                        <div class="row">
+                                            <div class="input-field col s12">
+                                                <label>@subProp.Name</label>
+                                                <input type="text" 
+                                                       name="@configSection.Name.@subProp.Name" 
+                                                       value="@subProp.Value" 
+                                                       class="validate" />
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="input-field col s12">
+                                            <label>@configSection.Name</label>
+                                            <input type="text" 
+                                                   name="@configSection.Name" 
+                                                   value="@configSection.Value" 
+                                                   class="validate" />
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="divider" style="margin: 20px 0;"></div>
+                        }
+
+                        <div class="row">
+                            <div class="col s12 right-align">
+                                <button type="submit" class="btn waves-effect waves-light light-blue">
+                                    <i class="material-icons left">save</i>Сохранить
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 500;
+    }
+
+    .input-field {
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+
+    .input-field label:not(.active) {
+        transform: translateY(0) scale(0.8);
+        transform-origin: 0 0;
+    }
+
+    .section h5 {
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn {
+        margin-left: 10px;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация полей ввода
+            M.updateTextFields();
+        });
+    </script>
+}

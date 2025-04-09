@@ -146,9 +146,9 @@
             // Инициализация полей ввода
             M.updateTextFields();
 
-            // Инициализация radio buttons
-            var radioElems = document.querySelectorAll('[type="radio"]');
-            M.FormSelect.init(radioElems);
+            // Инициализация textarea
+            var textareas = document.querySelectorAll('textarea');
+            M.CharacterCounter.init(textareas);
         });
     </script>
 }

@@ -1,12 +1,10 @@
-﻿@model SlqStudio.ViewModels.Auth.LoginRequest
-
-@{
+﻿@{
     Layout = null;
-    ViewData["Title"] = "Авторизация";
+    ViewData["Title"] = "Вход";
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,41 +41,37 @@
             font-size: 2.5rem;
             color: #01579b;
         }
-        .config-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background-color: #039be5; 
-            border-radius: 50%;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 50px;
-            height: 50px;
-        }
-        .config-btn i {
-            color: white;
-            font-size: 24px;
-        }
     </style>
 </head>
 <body>
 <main>
     <div class="container">
         <div class="auth-card">
-            <span class="brand-logo">SlqStudio</span>
+            <span class="brand-logo">SlqStudio конфигурация</span>
 
             <div class="card">
                 <div class="card-content">
-                    <span class="card-title center-align">Авторизация</span>
+                    <span class="card-title center-align">Вход</span>
 
-                    <form method="post">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="red-text text-darken-4 center-align">@ViewBag.Error</div>
+                    }
+
+                    <form method="post" asp-action="Login">
                         <div class="row">
                             <div class="input-field col s12">
-                                <i class="material-icons prefix">email</i>
-                                <input id="email" type="email" class="validate" name="Email" required>
-                                <label for="email">Email</label>
+                                <i class="material-icons prefix">person</i>
+                                <input id="name" type="text" class="validate" name="name" required>
+                                <label for="name">Имя пользователя</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">lock</i>
+                                <input id="password" type="password" class="validate" name="password" required>
+                                <label for="password">Пароль</label>
                             </div>
                         </div>
 
@@ -91,11 +85,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Ссылка на настройки в виде иконки -->
-    <a asp-controller="Config" asp-action="EditConfig" class="btn config-btn">
-        <i class="material-icons">settings</i>
-    </a>
 </main>
 
 <!-- Scripts -->

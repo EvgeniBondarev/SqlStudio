@@ -19,6 +19,7 @@ using SlqStudio.Application.CQRS.LabWork.Commands.Handlers;
 using SlqStudio.Application.CQRS.LabWork.Queries;
 using SlqStudio.Application.CQRS.LabWork.Queries.Handlers;
 using SlqStudio.Application.Services;
+using SlqStudio.Application.Services.AppSettingsServices;
 using SlqStudio.Application.Services.EmailService;
 using SlqStudio.Application.Services.EmailService.Implementation;
 using SlqStudio.Application.Services.EmailService.Models;
@@ -114,6 +115,9 @@ builder.Services.AddScoped<IMoodleService, MoodleService>();
 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddTransient<IEmailService, EmailService>();
+
+builder.Services.AddSingleton<IAppSettingsService, AppSettingsService>();
+builder.Services.AddSingleton<AppSettingsBuilder>();
 
 var app = builder.Build();
 

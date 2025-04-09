@@ -16,18 +16,27 @@ public class HomeController : Controller
         _jwtTokenHandler = jwtTokenHandler;
     }
 
-    // Действие Index
     public IActionResult Index()
     {
         var token = Request.Cookies["jwt"];
-        
-        var (email, role, name) = _jwtTokenHandler.GetClaimsFromToken(token);
-        
-        HttpContext.Session.SetString("UserEmail", email);
-        HttpContext.Session.SetString("UserRole", role.ToString());
-        HttpContext.Session.SetString("UserName", name);
+        if (string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction("Login", "Auth");
+        }
+        try
+        {
+            var (email, role, name) = _jwtTokenHandler.GetClaimsFromToken(token);
+            HttpContext.Session.SetString("UserEmail", email);
+            HttpContext.Session.SetString("UserRole", role.ToString());
+            HttpContext.Session.SetString("UserName", name);
 
-        return View();
+            return View();
+        }
+        catch (Exception ex)
+        {
+            Response.Cookies.Delete("jwt");
+            return RedirectToAction("Login", "Auth");
+        }
     }
 
     public IActionResult Privacy()
