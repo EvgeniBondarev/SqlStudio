@@ -8,7 +8,7 @@ using SlqStudio.Application.CQRS.LabWork.Queries;
 
 namespace SlqStudio.Controllers;
 
-[Authorize(Roles = "editingteacher")]
+//[Authorize(Roles = "editingteacher")]
 public class LabTasksController : Controller
 {
         private readonly IMediator _mediator;
@@ -22,7 +22,7 @@ public class LabTasksController : Controller
         }
         
         
-        // GET: /LabTasks/Details/5
+        [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> Details(int id)
         {
             var taskItem = await _mediator.Send(new GetTaskByIdQuery(id));
@@ -40,7 +40,7 @@ public class LabTasksController : Controller
         }
 
         
-        // GET: /LabTasks/Create
+        [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> Create()
         {
             // Получаем список лабораторных работ для выбора
@@ -49,7 +49,7 @@ public class LabTasksController : Controller
             return View();
         }
 
-        // POST: /LabTasks/Create
+        [Authorize(Roles = "editingteacher")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateTaskCommand command)
@@ -64,7 +64,7 @@ public class LabTasksController : Controller
             return View(command);
         }
 
-        // GET: /LabTasks/Edit/5
+        [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> Edit(int id)
         {
             var taskItem = await _mediator.Send(new GetTaskByIdQuery(id));
@@ -78,7 +78,7 @@ public class LabTasksController : Controller
             return View(command);
         }
 
-        // POST: /LabTasks/Edit/5
+        [Authorize(Roles = "editingteacher")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, UpdateTaskCommand command)
@@ -96,7 +96,7 @@ public class LabTasksController : Controller
             return View(command);
         }
 
-        // GET: /LabTasks/Delete/5
+        [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> Delete(int id)
         {
             var taskItem = await _mediator.Send(new GetTaskByIdQuery(id));
@@ -105,7 +105,7 @@ public class LabTasksController : Controller
             return View(taskItem);
         }
 
-        // POST: /LabTasks/Delete/5
+        [Authorize(Roles = "editingteacher")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

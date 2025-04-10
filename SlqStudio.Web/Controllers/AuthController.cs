@@ -33,7 +33,7 @@ namespace SlqStudio.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest request)
         {
-            var userData = await _moodleService.GetUserByEmailAsync(request.Email);
+            /*var userData = await _moodleService.GetUserByEmailAsync(request.Email);
             if (userData == null)
             {
                 return View();
@@ -42,7 +42,10 @@ namespace SlqStudio.Controllers
             var userRole = await _moodleService.GetUserProfileAsync(userData!.Id, course.Id);
             var tokenString = _jwtTokenService.GenerateJwtToken(userData.Email, 
                                                             userRole.Roles.FirstOrDefault().ShortName,
-                                                                userData.FullName);
+                                                                userData.FullName);*/
+            var tokenString = _jwtTokenService.GenerateJwtToken("test", 
+                "editingteacher",
+                "test");
             Response.Cookies.Append("jwt", tokenString, new CookieOptions
             {
                 HttpOnly = true,

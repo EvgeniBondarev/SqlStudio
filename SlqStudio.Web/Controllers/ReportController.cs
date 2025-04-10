@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SlqStudio.Application.CQRS.LabTask.Queries;
 using SlqStudio.Application.CQRS.LabWork.Queries;
 using SlqStudio.Application.Services.EmailService;
+using SlqStudio.Application.Services.ReportBuider;
 using SlqStudio.DTO;
 using SlqStudio.Persistence.Models;
 using SlqStudio.Session;
@@ -26,32 +27,17 @@ public class ReportController : Controller
         var reportDto = await CreateReportDtoAsync();
         return View(reportDto);
     }
-
+    
     [HttpPost]
     public async Task<IActionResult> SubmitReport(ReportDto report)
     {
         var reportDto = await CreateReportDtoAsync();
-
-        var builder = new ReportHtmlBuilder()
-            .AddUserInfo(reportDto.User)
-            .AddWorkInfo(reportDto.Solutions, reportDto.LabWorks)
-            .AddSolutionDetails(reportDto.Solutions, reportDto.LabWorks);
-
-        string htmlReport = builder.Build();
-        var result = await _emailService.SendEmailAsync("evgbondarev@edu.gstu.by", reportDto.User.Email, htmlReport);
-
-        if (result)
-        {
-            TempData["SuccessMessage"] = "Отчет успешно отправлен!";
-        }
-        else
-        {
-            TempData["ErrorMessage"] = "Ошибка при отправке отчета. Попробуйте снова.";
-        }
-
-        return RedirectToAction("Index");
+        var director = new ReportDirector();
+        string html = director.BuildHtmlReport(reportDto.User, reportDto.Solutions, reportDto.LabWorks);
+        byte[] pdf = director.BuildPdfReport(reportDto.User, reportDto.Solutions, reportDto.LabWorks);
+        var result = await _emailService.SendEmailAsync("evgbondarev@edu.gstu.by", reportDto.User.Email, html);
+        return File(pdf, "application/pdf", "report.pdf");
     }
-
 
     private async Task<ReportDto> CreateReportDtoAsync()
     {

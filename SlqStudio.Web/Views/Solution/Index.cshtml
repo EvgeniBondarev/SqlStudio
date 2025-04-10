@@ -201,6 +201,11 @@ SELECT * FROM dbo.GetLabCount();
                                 <button id="run-query" class="btn waves-effect waves-light blue" lab-id="@Model.Id">
                                     <i class="material-icons left">play_arrow</i>Запустить
                                 </button>
+                                <div class="card-action">
+                                    <a asp-area="" asp-action="DetailsByWork" asp-controller="LabTasks" asp-route-id="@Model.LabWorkId" class="btn waves-effect waves-light blue">
+                                        <i class="material-icons left">arrow_back</i>Закончить
+                                    </a>
+                                </div>
                             </div>
 
                             <!-- Результаты -->
@@ -266,12 +271,6 @@ SELECT * FROM dbo.GetLabCount();
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="card-action">
-                        <a asp-area="" asp-action="DetailsByWork" asp-controller="LabTasks" asp-route-id="@Model.LabWorkId" class="btn waves-effect waves-light blue">
-                            <i class="material-icons left">arrow_back</i>Закончить
-                        </a>
                     </div>
                 </div>
             </div>

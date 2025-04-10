@@ -1,12 +1,13 @@
 ﻿using System.Text;
+using SlqStudio.Application.Services.ReportBuider;
 using SlqStudio.DTO;
 using SlqStudio.Persistence.Models;
 
-public class ReportHtmlBuilder
+public class HtmlReportBuilder : IHtmlReportBuilder
 {
     private StringBuilder _html;
 
-    public ReportHtmlBuilder()
+    public HtmlReportBuilder()
     {
         _html = new StringBuilder();
         _html.Append("<html><head><meta charset='UTF-8'><title>Отчет по тесту</title>");
@@ -16,7 +17,7 @@ public class ReportHtmlBuilder
         _html.Append("h2, h3 { color: #333; }");
         _html.Append(".table { width: 100%; border-collapse: collapse; margin-top: 15px; }");
         _html.Append(".table th, .table td { border: 1px solid #ccc; padding: 10px; text-align: left; }");
-        _html.Append(".table th { background-color: #555; color: white; }");
+        _html.Append(".table th { background-color: #c8c8c8; color: black; }");
         _html.Append(".success { background-color: #d4edda; }");
         _html.Append(".danger { background-color: #f8d7da; }");
         _html.Append(".result-box { padding: 15px; margin-top: 20px; background: #e3e3e3; border-radius: 5px; }");
@@ -26,7 +27,7 @@ public class ReportHtmlBuilder
         _html.Append("<div class='container'>");
     }
 
-    public ReportHtmlBuilder AddUserInfo(UserDto user)
+    public IReportBuilder AddUserInfo(UserDto user)
     {
         _html.Append("<h2>Отчет по тесту</h2>");
         _html.AppendFormat("<p><strong>Пользователь:</strong> {0}</p>", user.Name);
@@ -34,7 +35,7 @@ public class ReportHtmlBuilder
         return this;
     }
 
-    public ReportHtmlBuilder AddWorkInfo(List<SolutionResultDto> solutions, List<LabWork> labWorks)
+    public IReportBuilder AddWorkInfo(List<SolutionResultDto> solutions, List<LabWork> labWorks)
     {
         foreach (var lab in labWorks)
         {
@@ -71,7 +72,6 @@ public class ReportHtmlBuilder
 
             _html.Append("</tbody></table>");
 
-            // Расчет оценки только для этой лабораторной работы
             if (totalTasks > 0)
             {
                 double score = (double)completedTasks / totalTasks * 10;
@@ -91,8 +91,7 @@ public class ReportHtmlBuilder
         return this;
     }
 
-
-    public ReportHtmlBuilder AddSolutionDetails(List<SolutionResultDto> solutions, List<LabWork> labWorks)
+    public IReportBuilder AddSolutionDetails(List<SolutionResultDto> solutions, List<LabWork> labWorks)
     {
         _html.Append("<h4>Детали решений</h4>");
         foreach (var solution in solutions)
@@ -111,7 +110,7 @@ public class ReportHtmlBuilder
 
     public string Build()
     {
-        _html.Append("</div></body></html>");
+        _html.Append("</html>");
         return _html.ToString();
     }
 }
