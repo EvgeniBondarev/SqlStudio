@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Доступ запрещен";
+    Layout = null; // Используйте ваш основной layout
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            background-color: #f5f5f5;
+        }
+        main {
+            flex: 1 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .access-denied-card {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        .access-denied-icon {
+            font-size: 5rem;
+            color: #e53935;
+            margin-bottom: 1.5rem;
+        }
+        .access-denied-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #e53935;
+        }
+        .access-denied-text {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #616161;
+        }
+        .btn-home {
+            margin-top: 1.5rem;
+            background-color: #3949ab !important;
+        }
+        .btn-home:hover {
+            background-color: #303f9f !important;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <div class="container">
+        <div class="card access-denied-card">
+            <div class="card-content">
+                <i class="material-icons access-denied-icon">block</i>
+                <h1 class="access-denied-title">Доступ запрещен</h1>
+                <p class="access-denied-text">У вас недостаточно прав для просмотра этой страницы.</p>
+                <p class="access-denied-text">Пожалуйста, обратитесь к администратору системы для получения доступа.</p>
+                <a href="@Url.Action("Index", "Home")" class="btn waves-effect waves-light btn-home">
+                    <i class="material-icons left">home</i> Вернуться на главную
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Materialize JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

@@ -197,11 +197,13 @@ RETURN
 );
 GO
 SELECT * FROM dbo.GetLabCount();
-                                </textarea>
-                                <button id="run-query" class="btn waves-effect waves-light blue" lab-id="@Model.Id">
-                                    <i class="material-icons left">play_arrow</i>Запустить
-                                </button>
-                                <div class="card-action">
+    </textarea>
+
+                                <div class="buttons-container" style="display: flex; justify-content: space-between; margin-top: 15px;">
+                                    <button id="run-query" class="btn waves-effect waves-light blue" lab-id="@Model.Id">
+                                        <i class="material-icons left">play_arrow</i>Запустить
+                                    </button>
+
                                     <a asp-area="" asp-action="DetailsByWork" asp-controller="LabTasks" asp-route-id="@Model.LabWorkId" class="btn waves-effect waves-light blue">
                                         <i class="material-icons left">arrow_back</i>Закончить
                                     </a>

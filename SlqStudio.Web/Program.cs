@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Application.Common.SQL;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using SlqStudio.Application.ApiClients.Moodle;
 using SlqStudio.Application.ApiClients.Moodle.Models;
@@ -101,7 +102,12 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("EditingTeacherPolicy", policy =>
         policy.RequireRole("editingteacher"));
+    
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
 });
+
 builder.Services.AddSingleton(jwtSettings);
 
 builder.Services.AddHttpClient();
@@ -126,6 +132,19 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseStatusCodePages(async context =>
+{
+    if (context.HttpContext.Response.StatusCode == 401)
+    {
+        var returnUrl = context.HttpContext.Request.Path;
+        context.HttpContext.Response.Redirect($"/Auth/Login?returnUrl={Uri.EscapeDataString(returnUrl)}");
+    }
+    else if (context.HttpContext.Response.StatusCode == 403)
+    {
+        context.HttpContext.Response.Redirect("/Home/AccessDenied");
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseRouting();

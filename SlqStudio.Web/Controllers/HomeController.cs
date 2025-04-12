@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SlqStudio.Application.Services;
 using SlqStudio.Models;
@@ -48,5 +49,11 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+    
+    [AllowAnonymous]
+    public IActionResult AccessDenied()
+    {
+        return View("~/Views/Shared/AccessDenied.cshtml");
     }
 }

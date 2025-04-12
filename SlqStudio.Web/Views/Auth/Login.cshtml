@@ -47,7 +47,7 @@
             position: absolute;
             bottom: 20px;
             right: 20px;
-            background-color: #039be5; 
+            background-color: #039be5;
             border-radius: 50%;
             padding: 10px;
             display: flex;
@@ -59,6 +59,81 @@
         .config-btn i {
             color: white;
             font-size: 24px;
+        }
+        .custom-radio-group {
+            margin-left: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .custom-radio-group p {
+            margin: 8px 0;
+        }
+
+        [type="radio"].with-gap:checked + span:before {
+            border: 2px solid #0288d1;
+        }
+
+        [type="radio"].with-gap:checked + span:after {
+            background-color: #0288d1;
+            border: 2px solid #0288d1;
+        }
+
+        .btn {
+            margin-left: 10px;
+        }
+
+        /* Новые стили для выравнивания полей */
+        .input-container {
+            position: relative;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .input-container .prefix {
+            position: absolute;
+            width: 3rem;
+            font-size: 2rem;
+            transition: color .2s;
+            top: 0.5rem;
+            color: #9e9e9e;
+        }
+        .input-container .prefix.active {
+            color: #0288d1;
+        }
+        .input-field {
+            padding-left: 3rem;
+            margin-top: 0;
+        }
+        .radio-options {
+            margin-top: -5px;
+        }
+        .input-field label {
+            left: 3rem;
+        }
+        .input-field label:not(.active) {
+            transform: translateY(0) !important;
+        }
+        /* Стили для валидации */
+        .error-message {
+            color: #f44336;
+            font-size: 0.8rem;
+            margin-left: 3rem;
+            display: none;
+        }
+        .invalid {
+            color: #f44336 !important;
+        }
+        .auth-error {
+            color: #f44336;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 4px;
+            background-color: #ffebee;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -72,12 +147,60 @@
                 <div class="card-content">
                     <span class="card-title center-align">Авторизация</span>
 
-                    <form method="post">
+                    <!-- Блок для отображения ошибок -->
+                    <div class="auth-error @(TempData["ErrorMessage"] == null ? "hidden" : "")">
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <i class="material-icons" style="vertical-align: middle;">error</i>
+                            @TempData["ErrorMessage"]
+                        }
+                    </div>
+
+                    <form method="post" id="authForm">
+                        @Html.AntiForgeryToken()
+
+                        <!-- Скрытое поле для returnUrl -->
+                        @if (ViewBag.ReturnUrl != null)
+                        {
+                            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                        }
+
+                        <!-- Поле Email -->
                         <div class="row">
-                            <div class="input-field col s12">
+                            <div class="col s12 input-container">
                                 <i class="material-icons prefix">email</i>
-                                <input id="email" type="email" class="validate" name="Email" required>
-                                <label for="email">Email</label>
+                                <div class="input-field">
+                                    <input id="email" type="email" class="validate" name="Email" required
+                                           value="@Model?.Email">
+                                    <label for="email">Email</label>
+                                    <span class="error-message">Пожалуйста, введите email</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Поле Курс -->
+                        <div class="row">
+                            <div class="col s12 input-container">
+                                <i class="material-icons prefix">school</i>
+                                <div class="input-field">
+                                    <label class="active">Курс</label><br/>
+                                    <div class="radio-options">
+                                        <div class="custom-radio-group scrollable-radio-group" id="courseGroup">
+                                            @foreach (var item in (SelectList)ViewBag.Courses)
+                                            {
+                                                <p>
+                                                    <label>
+                                                        <input type="radio" name="Course" value="@item.Value"
+                                                               class="with-gap" required
+                                                               @(Model?.Course == item.Value ? "checked" : "")>
+                                                        <span>@item.Text</span>
+                                                    </label>
+                                                </p>
+                                            }
+                                        </div>
+                                        <span class="error-message">Пожалуйста, выберите курс</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -91,11 +214,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Ссылка на настройки в виде иконки -->
-    <a asp-controller="Config" asp-action="EditConfig" class="btn config-btn">
-        <i class="material-icons">settings</i>
-    </a>
 </main>
 
 <!-- Scripts -->
@@ -105,6 +223,64 @@
     $(document).ready(function() {
         // Инициализация Materialize компонентов
         M.updateTextFields();
+
+        // Валидация формы
+        $('#authForm').on('submit', function(e) {
+            let isValid = true;
+
+            // Проверка email
+            const email = $('#email').val();
+            if (!email) {
+                $('#email').nextAll('.error-message').show();
+                $('#email').closest('.input-container').find('.prefix').addClass('invalid');
+                isValid = false;
+            } else {
+                $('#email').nextAll('.error-message').hide();
+                $('#email').closest('.input-container').find('.prefix').removeClass('invalid');
+            }
+
+            // Проверка выбора курса
+            const courseSelected = $('input[name="Course"]:checked').length > 0;
+            if (!courseSelected) {
+                $('#courseGroup').nextAll('.error-message').show();
+                $('.input-container:nth-child(2) .prefix').addClass('invalid');
+                isValid = false;
+            } else {
+                $('#courseGroup').nextAll('.error-message').hide();
+                $('.input-container:nth-child(2) .prefix').removeClass('invalid');
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Подсветка иконки при фокусе
+        $('input').focus(function() {
+            $(this).closest('.input-container').find('.prefix').addClass('active');
+        }).blur(function() {
+            if (!$(this).val()) {
+                $(this).closest('.input-container').find('.prefix').removeClass('active');
+            }
+        });
+
+        // Подсветка иконки курса при выборе
+        $('input[type="radio"][name="Course"]').change(function() {
+            $('.input-container:nth-child(2) .prefix').addClass('active');
+            $(this).closest('.custom-radio-group').nextAll('.error-message').hide();
+            $('.input-container:nth-child(2) .prefix').removeClass('invalid');
+        });
+
+        // Показываем сохраненные значения при повторной отправке формы
+        @if (Model != null)
+        {
+            <text>
+                if ($('#email').val()) {
+                    $('#email').closest('.input-container').find('.prefix').addClass('active');
+                }
+            </text>
+        }
     });
 </script>
 </body>

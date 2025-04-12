@@ -55,16 +55,18 @@
             @foreach (var lab in Model.LabWorks)
             {
                 <div class="section">
-                    <div class="row valign-wrapper">
-                        <div class="col s10">
-                            <h5><i class="material-icons left light-blue-text">work</i>@lab.Name</h5>
-                            @if(lab.Course != null)
-                            {
-                                <div class="chip light-blue lighten-1 white-text">
-                                    <i class="material-icons left">school</i>
-                                    @lab.Course.Name
-                                </div>
-                            }
+                    <div class="row" style="margin-bottom: 0;">
+                        <div class="col s12">
+                            <div style="display: flex; align-items: center; margin-left: -10px;">
+                                <h5 style="margin: 0 15px 0 0;"><i class="material-icons left light-blue-text">work</i>@lab.Name</h5>
+                                @if(lab.Course != null)
+                                {
+                                    <div class="chip light-blue lighten-1 white-text">
+                                        <i class="material-icons left">school</i>
+                                        @lab.Course.Name
+                                    </div>
+                                }
+                            </div>
                         </div>
                     </div>
 
