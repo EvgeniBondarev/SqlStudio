@@ -3,6 +3,7 @@ using Application.Common.SQL.ResponseModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SlqStudio.Application.CQRS.LabTask.Queries;
+using SlqStudio.Application.Services.VariantServices;
 using SlqStudio.Session;
 using SlqStudio.ViewModel.Mappers;
 using SlqStudio.ViewModel.Models;
@@ -14,15 +15,25 @@ public class SolutionController : Controller
 {
     private readonly IMediator _mediator;
     private readonly SqlManager _sqlManager;
+    private readonly VariantServices _variantServices;
 
-    public SolutionController(IMediator mediator, SqlManager sqlManager)
+    public SolutionController(IMediator mediator, 
+                              SqlManager sqlManager,
+                              VariantServices variantServices)
     {
         _mediator = mediator;
         _sqlManager = sqlManager;
+        _variantServices = variantServices;
     }
     
     public async Task<IActionResult> Index(int taskId)
     {
+        var variant = _variantServices.GetVariantFromCache(HttpContext.Session.GetString("UserEmail"));
+        if (!variant.Any(v => v.Id == taskId))
+        {
+            return Forbid();
+        }
+        
         var task = await _mediator.Send(new GetTaskByIdQuery(taskId));
         LabTaskViewModel  labTaskViewModel = task?.ToViewModel();
         labTaskViewModel.QueryData = await _sqlManager.ExecuteQueryAsync(task.SolutionExample);

@@ -45,7 +45,7 @@
                                     @foreach (var lab in Model)
                                     {
                                         <tr>
-                                            <td>@lab.Name</td>
+                                            <td>@(lab.Name?.Length > 20? lab.Name.Substring(0, 20) + "..." : lab.Name)</td>
                                             <td>@(lab.Description?.Length > 50 ? lab.Description.Substring(0, 50) + "..." : lab.Description)</td>
                                             <td>@lab.Number</td>
                                             <td>

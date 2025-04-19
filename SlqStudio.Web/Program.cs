@@ -26,6 +26,7 @@ using SlqStudio.Application.Services.EmailService.Implementation;
 using SlqStudio.Application.Services.EmailService.Models;
 using SlqStudio.Application.Services.Implementation;
 using SlqStudio.Application.Services.Models;
+using SlqStudio.Application.Services.VariantServices;
 using SlqStudio.Persistence;
 using SlqStudio.Persistence.Models;
 
@@ -118,6 +119,7 @@ builder.Services.AddSingleton<MoodleApiClient>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IJwtTokenHandler, JwtTokenHandler>();
 builder.Services.AddScoped<IMoodleService, MoodleService>();
+builder.Services.AddScoped<VariantServices>();
 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddTransient<IEmailService, EmailService>();

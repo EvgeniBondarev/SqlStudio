@@ -5,6 +5,7 @@ using SlqStudio.Application.CQRS.LabTask.Queries;
 using SlqStudio.Application.CQRS.LabWork.Queries;
 using SlqStudio.Application.Services.EmailService;
 using SlqStudio.Application.Services.ReportBuider;
+using SlqStudio.Application.Services.VariantServices;
 using SlqStudio.DTO;
 using SlqStudio.Persistence.Models;
 using SlqStudio.Session;
@@ -15,11 +16,15 @@ public class ReportController : Controller
 {
     private readonly IMediator _mediator;
     private readonly IEmailService _emailService;
+    private readonly VariantServices _variantServices;
 
-    public ReportController(IMediator mediator, IEmailService emailService)
+    public ReportController(IMediator mediator, 
+                            IEmailService emailService,
+                            VariantServices variantServices)
     {
         _mediator = mediator;
         _emailService = emailService;
+        _variantServices = variantServices;
     }
 
     public async Task<IActionResult> Index()
@@ -43,6 +48,8 @@ public class ReportController : Controller
     {
         var user = GetUserFromSession();
         var solutionResults = GetSolutionResultsFromSession();
+        var variant = _variantServices.GetVariantFromCache(user.Email);
+        
         var labWorks = new List<LabWork>();
 
         foreach (var solutionResult in solutionResults)
@@ -50,7 +57,11 @@ public class ReportController : Controller
             var taskItem = await _mediator.Send(new GetTaskByIdQuery(solutionResult.TaskId));
             if (!labWorks.Any(l => l.Id == taskItem.LabWork.Id))
             {
-                labWorks.Add(await _mediator.Send(new GetLabWorkByIdQuery(taskItem.LabWork.Id)));
+                var labWork = await _mediator.Send(new GetLabWorkByIdQuery(taskItem.LabWork.Id));
+                labWork.Tasks = labWork.Tasks
+                                        .Where(task => variant.Any(v => v.Id == task.Id))
+                                        .ToList();
+                labWorks.Add(labWork);
             }
         }
 

@@ -43,35 +43,13 @@
                             </div>
                         </div>
 
-                        <!-- Поле Condition (Кастомный HTML редактор) -->
+                        <!-- Поле Condition (простой textarea) -->
                         <div class="row">
-                            <div class="col s12">
+                            <div class="input-field col s12">
                                 <i class="material-icons prefix light-blue-text">description</i>
-                                <label class="active">Условие задания</label>
-                                <div class="html-editor card-panel grey lighten-5" style="padding: 15px; margin-left: 3rem;">
-                                    <!-- Toolbar -->
-                                    <div class="editor-toolbar">
-                                        <a class="btn-flat waves-effect tooltipped" data-tooltip="Жирный" data-cmd="bold">
-                                            <i class="material-icons">format_bold</i>
-                                        </a>
-                                        <a class="btn-flat waves-effect tooltipped" data-tooltip="Курсив" data-cmd="italic">
-                                            <i class="material-icons">format_italic</i>
-                                        </a>
-                                        <a class="btn-flat waves-effect tooltipped" data-tooltip="Ссылка" data-cmd="createLink">
-                                            <i class="material-icons">link</i>
-                                        </a>
-                                        <a class="btn-flat waves-effect tooltipped" data-tooltip="Список" data-cmd="insertUnorderedList">
-                                            <i class="material-icons">format_list_bulleted</i>
-                                        </a>
-                                        <a class="btn-flat waves-effect tooltipped" data-tooltip="Нумерованный список" data-cmd="insertOrderedList">
-                                            <i class="material-icons">format_list_numbered</i>
-                                        </a>
-                                    </div>
-                                    <!-- Editable content -->
-                                    <div id="condition-editor" class="editor-content" contenteditable="true" style="min-height: 200px; border: 1px solid #ddd; padding: 10px; margin-top: 10px;"></div>
-                                </div>
-                                <textarea asp-for="Condition" id="condition-textarea" class="hide"></textarea>
-                                <span class="helper-text red-text" asp-validation-for="Condition" style="margin-left: 3rem;"></span>
+                                <textarea asp-for="Condition" class="materialize-textarea validate" style="min-height: 150px;"></textarea>
+                                <label>Условие задания</label>
+                                <span class="helper-text red-text" asp-validation-for="Condition"></span>
                             </div>
                         </div>
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SlqStudio.Application.CQRS.LabTask.Commands;
 using SlqStudio.Application.CQRS.LabTask.Queries;
 using SlqStudio.Application.CQRS.LabWork.Queries;
+using SlqStudio.Application.Services.VariantServices;
 
 namespace SlqStudio.Controllers;
 
@@ -12,7 +13,12 @@ namespace SlqStudio.Controllers;
 public class LabTasksController : Controller
 {
         private readonly IMediator _mediator;
-        public LabTasksController(IMediator mediator) => _mediator = mediator;
+        private readonly VariantServices _variantServices;
+        public LabTasksController(IMediator mediator, VariantServices variantServices)
+        {
+            _mediator = mediator;
+            _variantServices = variantServices;
+        }
 
         // GET: /LabTasks
         public async Task<IActionResult> Index()
@@ -36,14 +42,13 @@ public class LabTasksController : Controller
             var labWorkItem = await _mediator.Send(new GetLabWorkByIdQuery(id));
             if (labWorkItem == null)
                 return NotFound();
-            return View(labWorkItem.Tasks);
+            return View(_variantServices.GenerateVariant(labWorkItem.Tasks.ToList(), HttpContext.Session.GetString("UserEmail")));
         }
 
         
         [Authorize(Roles = "editingteacher")]
         public async Task<IActionResult> Create()
         {
-            // Получаем список лабораторных работ для выбора
             var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
             ViewBag.LabWorks = new SelectList(labWorks, "Id", "Name");
             return View();
@@ -72,7 +77,6 @@ public class LabTasksController : Controller
                 return NotFound();
 
             var command = new UpdateTaskCommand(taskItem.Id, taskItem.Number, taskItem.Title, taskItem.Condition, taskItem.SolutionExample, taskItem.LabWorkId);
-            // Передаём выбранный LabWorkId в качестве выбранного значения
             var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
             ViewBag.LabWorks = new SelectList(labWorks, "Id", "Name", taskItem.LabWorkId);
             return View(command);

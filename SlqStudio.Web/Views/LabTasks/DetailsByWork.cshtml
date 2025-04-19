@@ -47,12 +47,12 @@
 
                                         <tr onclick="window.location.href='@Url.Action("Index", "Solution", new { taskId = task.Id })'" style="cursor:pointer;" class="@rowClass">
                                             <td>@task.Number</td>
-                                            <td>@task.Title</td>
+                                            <td>@(task.Title?.Length > 50 ? task.Title.Substring(0, 50) + "..." : task.Title)</td>
                                             <td>
                                                 @if(task.LabWork != null)
                                                 {
                                                     <span class="chip light-blue lighten-1 white-text">
-                                                        @task.LabWork.Name
+                                                        @(task.LabWork.Name?.Length > 20 ? task.LabWork.Name.Substring(0, 20) + "..." : task.LabWork.Name)
                                                     </span>
                                                 }
                                             </td>

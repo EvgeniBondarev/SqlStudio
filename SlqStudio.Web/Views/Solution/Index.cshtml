@@ -1,6 +1,6 @@
 ﻿@model SlqStudio.ViewModel.Models.LabTaskViewModel
 @{
-    Layout = "_Layout";
+Layout = "_Layout";
 }
 
 <!-- Подключение CodeMirror -->
@@ -70,6 +70,7 @@
         overflow-y: auto;
         padding-right: 10px;
         margin-top: 10px;
+        max-height: calc(100% - 40px); /* Добавлено для ограничения высоты */
     }
 
     /* Стили для редактора и результатов */
@@ -84,12 +85,15 @@
     .editor-section {
         flex: 0 0 auto;
         margin-bottom: 20px;
+        max-height: 400px; /* Добавлено для ограничения высоты */
+        overflow-y: auto; /* Добавлено для прокрутки */
     }
 
     .results-section {
         flex: 1;
         overflow-y: auto;
         padding-right: 10px;
+        max-height: calc(100% - 420px); /* Добавлено для ограничения высоты */
     }
 
     .CodeMirror {
@@ -106,17 +110,26 @@
 
     /* Скроллбар */
     ::-webkit-scrollbar {
-        width: 6px;
+        width: 8px;
+        height: 8px;
     }
 
     ::-webkit-scrollbar-thumb {
         background-color: #90a4ae;
-        border-radius: 3px;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: #f1f1f1;
     }
 
     /* Фикс для Materialize */
     .card .card-content {
         padding: 24px;
+    }
+
+    .card-content {
+        overflow-x: auto;
     }
 
     .card-action {
@@ -241,34 +254,34 @@ SELECT * FROM dbo.GetLabCount();
                                 <div id="expected-result" class="result-table">
                                     @if (Model.QueryData != null && Model.QueryData.Any())
                                     {
-                                        <h5>Ожидаемый результат:</h5>
-                                        <div class="responsive-table">
-                                            <table class="highlight">
-                                                <thead>
-                                                <tr>
-                                                    @foreach (var column in Model.QueryData.First().Keys)
-                                                    {
-                                                        <th>@column</th>
-                                                    }
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                @foreach (var row in Model.QueryData)
+                                    <h5>Ожидаемый результат:</h5>
+                                    <div class="responsive-table">
+                                        <table class="highlight">
+                                            <thead>
+                                            <tr>
+                                                @foreach (var column in Model.QueryData.First().Keys)
                                                 {
-                                                    <tr>
-                                                        @foreach (var value in row.Values)
-                                                        {
-                                                            <td>@value</td>
-                                                        }
-                                                    </tr>
+                                                <th>@column</th>
                                                 }
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach (var row in Model.QueryData)
+                                            {
+                                            <tr>
+                                                @foreach (var value in row.Values)
+                                                {
+                                                <td>@value</td>
+                                                }
+                                            </tr>
+                                            }
+                                            </tbody>
+                                        </table>
+                                    </div>
                                     }
                                     else
                                     {
-                                        <p>Нет данных для отображения.</p>
+                                    <p>Нет данных для отображения.</p>
                                     }
                                 </div>
                             </div>
@@ -281,95 +294,95 @@ SELECT * FROM dbo.GetLabCount();
 </main>
 
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/sql/sql.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/sql-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/sql/sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/sql-hint.min.js"></script>
 
-    <script>
-        // Инициализация CodeMirror
-        var editor = CodeMirror.fromTextArea(document.getElementById("sqlScript"), {
-            mode: "text/x-sql",
-            lineNumbers: true,
-            theme: "material",
-            extraKeys: {
-                "Tab": function(cm) {
-                    if (cm.state.completionActive) {
-                        cm.state.completionActive.widget.pick();
-                    } else {
-                        cm.showHint({ completeSingle: false });
-                    }
-                }
-            },
-            hintOptions: {
-                tables: {
-                    "Products": ["ProductID", "ProductName", "Category", "Price", "StockQuantity"],
-                    "Orders": ["OrderID", "ProductID", "Quantity", "OrderDate", "CustomerID"]
+<script>
+    // Инициализация CodeMirror
+    var editor = CodeMirror.fromTextArea(document.getElementById("sqlScript"), {
+        mode: "text/x-sql",
+        lineNumbers: true,
+        theme: "material",
+        extraKeys: {
+            "Tab": function(cm) {
+                if (cm.state.completionActive) {
+                    cm.state.completionActive.widget.pick();
+                } else {
+                    cm.showHint({ completeSingle: false });
                 }
             }
-        });
+        },
+        hintOptions: {
+            tables: {
+                "Products": ["ProductID", "ProductName", "Category", "Price", "StockQuantity"],
+                "Orders": ["OrderID", "ProductID", "Quantity", "OrderDate", "CustomerID"]
+            }
+        }
+    });
 
-        // Обработчик кнопки "Запустить"
-        document.getElementById('run-query').addEventListener('click', function() {
-            var query = editor.getValue();
-            var taskId = this.getAttribute('lab-id');
+    // Обработчик кнопки "Запустить"
+    document.getElementById('run-query').addEventListener('click', function() {
+        var query = editor.getValue();
+        var taskId = this.getAttribute('lab-id');
 
-            // Показываем индикатор загрузки
-            showAlertMessage('info', 'Выполнение запроса...');
+        // Показываем индикатор загрузки
+        showAlertMessage('info', 'Выполнение запроса...');
 
-            // Отправка запроса
-            fetch("http://localhost:5051/Solution/ValidateSqlSyntax", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ sqlQuery: query })
+        // Отправка запроса
+        fetch("http://localhost:5051/Solution/ValidateSqlSyntax", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sqlQuery: query })
+        })
+            .then(response => response.json())
+            .then(validateResponse => {
+                if (validateResponse.isValid) {
+                    return fetch("http://localhost:5051/Solution/CompareSql", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ taskId: taskId, sqlQuery: query })
+                    });
+                } else {
+                    showAlertMessage(false, "Ошибка в SQL: " + validateResponse.error);
+                    displayErrorResult(validateResponse.error);
+                    throw new Error("Invalid SQL");
+                }
             })
-                .then(response => response.json())
-                .then(validateResponse => {
-                    if (validateResponse.isValid) {
-                        return fetch("http://localhost:5051/Solution/CompareSql", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ taskId: taskId, sqlQuery: query })
-                        });
-                    } else {
-                        showAlertMessage(false, "Ошибка в SQL: " + validateResponse.error);
-                        displayErrorResult(validateResponse.error);
-                        throw new Error("Invalid SQL");
-                    }
-                })
-                .then(response => response.json())
-                .then(compareResponse => {
-                    if (compareResponse.dataIsEqual) {
-                        showAlertMessage(true, "Ответ верный!");
-                    } else {
-                        showAlertMessage(false, "Ответ неверный!");
-                    }
-                    displayResultTables(compareResponse);
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    if (!error.message.includes("Invalid SQL")) {
-                        showAlertMessage(false, "Произошла ошибка при выполнении запроса");
-                    }
-                });
-        });
+            .then(response => response.json())
+            .then(compareResponse => {
+                if (compareResponse.dataIsEqual) {
+                    showAlertMessage(true, "Ответ верный!");
+                } else {
+                    showAlertMessage(false, "Ответ неверный!");
+                }
+                displayResultTables(compareResponse);
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                if (!error.message.includes("Invalid SQL")) {
+                    showAlertMessage(false, "Произошла ошибка при выполнении запроса");
+                }
+            });
+    });
 
-        function displayResultTables(compareResponse) {
-            const queryData1 = compareResponse.queryData1 || [];
-            const queryData2 = compareResponse.queryData2 || [];
+    function displayResultTables(compareResponse) {
+        const queryData1 = compareResponse.queryData1 || [];
+        const queryData2 = compareResponse.queryData2 || [];
 
-            const tableHeaders1 = Object.keys(queryData1[0] || {}).map(key => `<th>${key}</th>`).join('');
-            const tableHeaders2 = Object.keys(queryData2[0] || {}).map(key => `<th>${key}</th>`).join('');
+        const tableHeaders1 = Object.keys(queryData1[0] || {}).map(key => `<th>${key}</th>`).join('');
+        const tableHeaders2 = Object.keys(queryData2[0] || {}).map(key => `<th>${key}</th>`).join('');
 
-            const queryData1Rows = queryData1
-                .map(row => `<tr>${Object.values(row).map(value => `<td>${value}</td>`).join('')}</tr>`)
-                .join('');
+        const queryData1Rows = queryData1
+            .map(row => `<tr>${Object.values(row).map(value => `<td>${value}</td>`).join('')}</tr>`)
+            .join('');
 
-            const queryData2Rows = queryData2
-                .map(row => `<tr>${Object.values(row).map(value => `<td>${value}</td>`).join('')}</tr>`)
-                .join('');
+        const queryData2Rows = queryData2
+            .map(row => `<tr>${Object.values(row).map(value => `<td>${value}</td>`).join('')}</tr>`)
+            .join('');
 
-            document.getElementById('query-result').innerHTML = `
+        document.getElementById('query-result').innerHTML = `
                 <h5>Результат:</h5>
                 <div class="responsive-table">
                     <table class="highlight">
@@ -381,7 +394,7 @@ SELECT * FROM dbo.GetLabCount();
                 </div>
             `;
 
-            document.getElementById('expected-result').innerHTML = `
+        document.getElementById('expected-result').innerHTML = `
                 <h5>Ожидаемый результат:</h5>
                 <div class="responsive-table">
                     <table class="highlight">
@@ -392,30 +405,30 @@ SELECT * FROM dbo.GetLabCount();
                     </table>
                 </div>
             `;
-        }
+    }
 
-        function displayErrorResult(error) {
-            document.getElementById('query-result').innerHTML = `
+    function displayErrorResult(error) {
+        document.getElementById('query-result').innerHTML = `
                 <h5>Ошибка:</h5>
                 <div class="card-panel red lighten-4">
                     ${error}
                 </div>
             `;
-        }
+    }
 
-        function showAlertMessage(isSuccess, message) {
-            M.toast({
-                html: message,
-                classes: isSuccess ? 'green' : 'red',
-                displayLength: 4000
-            });
-        }
-
-        // Обновляем размеры редактора после загрузки
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                editor.refresh();
-            }, 100);
+    function showAlertMessage(isSuccess, message) {
+        M.toast({
+            html: message,
+            classes: isSuccess ? 'green' : 'red',
+            displayLength: 4000
         });
-    </script>
+    }
+
+    // Обновляем размеры редактора после загрузки
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            editor.refresh();
+        }, 100);
+    });
+</script>
 }
