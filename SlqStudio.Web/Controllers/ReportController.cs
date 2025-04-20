@@ -12,7 +12,7 @@ using SlqStudio.Session;
 
 namespace SlqStudio.Controllers;
 
-public class ReportController : Controller
+public class ReportController : BaseMvcController
 {
     private readonly IMediator _mediator;
     private readonly IEmailService _emailService;
@@ -20,7 +20,9 @@ public class ReportController : Controller
 
     public ReportController(IMediator mediator, 
                             IEmailService emailService,
-                            VariantServices variantServices)
+                            VariantServices variantServices,
+                            ILogger<ReportController> logger)
+        : base(logger)
     {
         _mediator = mediator;
         _emailService = emailService;
@@ -29,48 +31,77 @@ public class ReportController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var reportDto = await CreateReportDtoAsync();
-        return View(reportDto);
+        try
+        {
+            LogInfo("Запрос на создание отчета.");
+            var reportDto = await CreateReportDtoAsync();
+            return View(reportDto);
+        }
+        catch (Exception ex)
+        {
+            LogError("Ошибка при создании отчета.", ex);
+            return StatusCode(500, new { message = "Internal server error" });
+        }
     }
     
     [HttpPost]
     public async Task<IActionResult> SubmitReport(ReportDto report)
     {
-        var reportDto = await CreateReportDtoAsync();
-        var director = new ReportDirector();
-        string html = director.BuildHtmlReport(reportDto.User, reportDto.Solutions, reportDto.LabWorks);
-        byte[] pdf = director.BuildPdfReport(reportDto.User, reportDto.Solutions, reportDto.LabWorks);
-        var result = await _emailService.SendEmailAsync("evgbondarev@edu.gstu.by", reportDto.User.Email, html);
-        return File(pdf, "application/pdf", "report.pdf");
+        try
+        {
+            LogInfo("Запрос на отправку отчета.");
+            var reportDto = await CreateReportDtoAsync();
+            var director = new ReportDirector();
+            string html = director.BuildHtmlReport(reportDto.User, reportDto.Solutions, reportDto.LabWorks);
+            byte[] pdf = director.BuildPdfReport(reportDto.User, reportDto.Solutions, reportDto.LabWorks);
+
+            var result = await _emailService.SendEmailAsync("evgbondarev@edu.gstu.by", reportDto.User.Email, html);
+            LogInfo($"Отчет успешно отправлен на email {reportDto.User.Email}");
+            return File(pdf, "application/pdf", "report.pdf");
+        }
+        catch (Exception ex)
+        {
+            LogError("Ошибка при отправке отчета.", ex);
+            return StatusCode(500, new { message = "Internal server error" });
+        }
     }
 
     private async Task<ReportDto> CreateReportDtoAsync()
     {
-        var user = GetUserFromSession();
-        var solutionResults = GetSolutionResultsFromSession();
-        var variant = _variantServices.GetVariantFromCache(user.Email);
-        
-        var labWorks = new List<LabWork>();
-
-        foreach (var solutionResult in solutionResults)
+        try
         {
-            var taskItem = await _mediator.Send(new GetTaskByIdQuery(solutionResult.TaskId));
-            if (!labWorks.Any(l => l.Id == taskItem.LabWork.Id))
+            LogInfo("Создание ReportDto...");
+            var user = GetUserFromSession();
+            var solutionResults = GetSolutionResultsFromSession();
+            var variant = _variantServices.GetVariantFromCache(user.Email);
+            
+            var labWorks = new List<LabWork>();
+
+            foreach (var solutionResult in solutionResults)
             {
-                var labWork = await _mediator.Send(new GetLabWorkByIdQuery(taskItem.LabWork.Id));
-                labWork.Tasks = labWork.Tasks
-                                        .Where(task => variant.Any(v => v.Id == task.Id))
-                                        .ToList();
-                labWorks.Add(labWork);
+                var taskItem = await _mediator.Send(new GetTaskByIdQuery(solutionResult.TaskId));
+                if (!labWorks.Any(l => l.Id == taskItem.LabWork.Id))
+                {
+                    var labWork = await _mediator.Send(new GetLabWorkByIdQuery(taskItem.LabWork.Id));
+                    labWork.Tasks = labWork.Tasks
+                                            .Where(task => variant.Any(v => v.Id == task.Id))
+                                            .ToList();
+                    labWorks.Add(labWork);
+                }
             }
-        }
 
-        return new ReportDto
+            return new ReportDto
+            {
+                User = user,
+                Solutions = solutionResults,
+                LabWorks = labWorks
+            };
+        }
+        catch (Exception ex)
         {
-            User = user,
-            Solutions = solutionResults,
-            LabWorks = labWorks
-        };
+            LogError("Ошибка при создании ReportDto.", ex);
+            throw;
+        }
     }
 
     private UserDto GetUserFromSession()

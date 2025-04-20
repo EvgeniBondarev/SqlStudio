@@ -5,17 +5,16 @@ namespace SlqStudio.Controllers;
 
 [ApiController]
 [Route("api/moodle")]
-public class MoodleController : ControllerBase
+public class MoodleController : BaseMvcController
 {
     private readonly IMoodleService _moodleService;
-    private readonly ILogger<MoodleController> _logger;
 
     public MoodleController(
-        IMoodleService moodleService,
-        ILogger<MoodleController> logger)
+        ILogger<MoodleController> logger,
+        IMoodleService moodleService)
+        : base(logger)
     {
         _moodleService = moodleService;
-        _logger = logger;
     }
 
     [HttpGet("user-profile")]
@@ -23,12 +22,13 @@ public class MoodleController : ControllerBase
     {
         try
         {
+            LogInfo($"Запрос на получение профиля пользователя. UserId: {userId}, CourseId: {courseId}");
             var response = await _moodleService.GetUserProfileAsync(userId, courseId);
             return Ok(response);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching user profile");
+            LogError($"Ошибка при получении профиля пользователя. UserId: {userId}, CourseId: {courseId}", ex);
             return StatusCode(500, new { message = "Internal server error" });
         }
     }
@@ -38,12 +38,13 @@ public class MoodleController : ControllerBase
     {
         try
         {
+            LogInfo("Запрос на получение всех курсов");
             var response = await _moodleService.GetAllCoursesAsync();
             return Ok(response);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching courses");
+            LogError("Ошибка при получении списка курсов", ex);
             return StatusCode(500, new { message = "Internal server error" });
         }
     }
@@ -53,12 +54,13 @@ public class MoodleController : ControllerBase
     {
         try
         {
+            LogInfo($"Запрос на получение пользователя по email: {email}");
             var response = await _moodleService.GetUserByEmailAsync(email);
             return Ok(response);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching user by email");
+            LogError($"Ошибка при получении пользователя по email: {email}", ex);
             return StatusCode(500, new { message = "Internal server error" });
         }
     }

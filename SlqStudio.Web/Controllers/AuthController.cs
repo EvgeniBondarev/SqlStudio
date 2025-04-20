@@ -10,7 +10,7 @@ using SlqStudio.ViewModels.Auth;
 
 namespace SlqStudio.Controllers
 {
-    public class AuthController : Controller
+    public class AuthController : BaseMvcController
     {
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IMediator _mediator;
@@ -19,7 +19,9 @@ namespace SlqStudio.Controllers
         public AuthController(
             IJwtTokenService jwtTokenService,
             IMediator mediator,
-            IMoodleService moodleService)
+            IMoodleService moodleService,
+            ILogger<BaseMvcController> logger)
+            : base(logger)
         {
             _jwtTokenService = jwtTokenService;
             _mediator = mediator;
@@ -31,6 +33,7 @@ namespace SlqStudio.Controllers
         {
             if (User.Identity?.IsAuthenticated == true)
             {
+                LogInfo("Пользователь уже авторизован");
                 return RedirectToLocal(returnUrl);
             }
 
@@ -42,6 +45,7 @@ namespace SlqStudio.Controllers
             }
             catch (Exception ex)
             {
+                LogError("Ошибка при загрузке курсов", ex);
                 TempData["ErrorMessage"] = "Произошла ошибка при загрузке данных: " + ex.Message;
                 return View();
             }
@@ -57,6 +61,7 @@ namespace SlqStudio.Controllers
 
             if (!ModelState.IsValid)
             {
+                LogWarning("Неверная модель авторизации", request);
                 TempData["ErrorMessage"] = "Пожалуйста, заполните все обязательные поля корректно.";
                 return View(request);
             }
@@ -66,12 +71,14 @@ namespace SlqStudio.Controllers
                 var userData = await _moodleService.GetUserByEmailAsync(request.Email);
                 if (userData == null)
                 {
+                    LogWarning("Пользователь не найден", request.Email);
                     TempData["ErrorMessage"] = "Пользователь с таким email не найден.";
                     return View(request);
                 }
 
                 if (string.IsNullOrEmpty(request.Course))
                 {
+                    LogWarning("Курс не найден", request.Course);
                     TempData["ErrorMessage"] = "Курс не выбран.";
                     return View(request);
                 }
@@ -79,6 +86,7 @@ namespace SlqStudio.Controllers
                 var course = await _moodleService.GetAllCourseByName(request.Course);
                 if (course == null)
                 {
+                    LogWarning("Курс не найден", request.Course);
                     TempData["ErrorMessage"] = "Выбранный курс не найден.";
                     return View(request);
                 }
@@ -86,6 +94,7 @@ namespace SlqStudio.Controllers
                 var userRole = await _moodleService.GetUserProfileAsync(userData.Id, course.Id);
                 if (userRole == null || userRole.Roles == null || !userRole.Roles.Any())
                 {
+                    LogWarning("Роль пользователя не найдена", new { userId = userData.Id });
                     TempData["ErrorMessage"] = "Не удалось определить вашу роль в системе.";
                     return View(request);
                 }
@@ -102,11 +111,12 @@ namespace SlqStudio.Controllers
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.UtcNow.AddMinutes(30)
                 });
-
+                LogInfo("Пользователь успешно авторизован", userData.Email);
                 return RedirectToLocal(returnUrl);
             }
             catch (Exception ex)
             {
+                LogError("Ошибка при авторизации", ex);
                 TempData["ErrorMessage"] = "Произошла ошибка при авторизации: " + ex.Message;
                 return View(request);
             }
@@ -115,6 +125,7 @@ namespace SlqStudio.Controllers
 
         public IActionResult Logout()
         {
+            LogInfo("Выход произошел успешно");
             Response.Cookies.Delete("jwt");
             return RedirectToAction("Login", "Auth");
         }

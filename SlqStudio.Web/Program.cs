@@ -1,131 +1,23 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Application.Common.SQL;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using SlqStudio.Application.ApiClients.Moodle;
-using SlqStudio.Application.ApiClients.Moodle.Models;
-using SlqStudio.Application.CQRS.Course.Commands;
-using SlqStudio.Application.CQRS.Course.Commands.Handlers;
-using SlqStudio.Application.CQRS.Course.Queries;
-using SlqStudio.Application.CQRS.Course.Queries.Handlers;
-using SlqStudio.Application.CQRS.LabTask.Commands;
-using SlqStudio.Application.CQRS.LabTask.Commands.Handler;
-using SlqStudio.Application.CQRS.LabTask.Queries;
-using SlqStudio.Application.CQRS.LabTask.Queries.Handler;
-using SlqStudio.Application.CQRS.LabWork.Commands;
-using SlqStudio.Application.CQRS.LabWork.Commands.Handlers;
-using SlqStudio.Application.CQRS.LabWork.Queries;
-using SlqStudio.Application.CQRS.LabWork.Queries.Handlers;
-using SlqStudio.Application.Services;
-using SlqStudio.Application.Services.AppSettingsServices;
-using SlqStudio.Application.Services.EmailService;
-using SlqStudio.Application.Services.EmailService.Implementation;
-using SlqStudio.Application.Services.EmailService.Models;
-using SlqStudio.Application.Services.Implementation;
-using SlqStudio.Application.Services.Models;
-using SlqStudio.Application.Services.VariantServices;
-using SlqStudio.Persistence;
-using SlqStudio.Persistence.Models;
+using SlqStudio.Extensions;
+using SlqStudio.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString =builder.Configuration.GetConnectionString("MySQL");
-var labsConnectionString = builder.Configuration.GetConnectionString("LabsConnection");
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-builder.Services.AddSingleton<SqlManager>(sp => new SqlManager(labsConnectionString));
-
-
-builder.Services.AddMediatR(
-    typeof(CreateCourseCommandHandler).Assembly,
-    typeof(UpdateCourseCommandHandler).Assembly,
-    typeof(DeleteCourseCommandHandler).Assembly,
-    typeof(GetAllCoursesQueryHandler).Assembly,
-    typeof(GetCourseByIdQueryHandler).Assembly,
-    typeof(CreateLabWorkCommandHandler).Assembly,
-    typeof(UpdateLabWorkCommandHandler).Assembly,
-    typeof(DeleteLabWorkCommandHandler).Assembly,
-    typeof(GetAllLabWorksQueryHandler).Assembly,
-    typeof(GetLabWorkByIdQueryHandler).Assembly,
-    typeof(CreateTaskCommandHandler).Assembly,
-    typeof(UpdateTaskCommandHandler).Assembly,
-    typeof(DeleteTaskCommandHandler).Assembly,
-    typeof(GetAllTasksQueryHandler).Assembly,
-    typeof(GetTaskByIdQueryHandler).Assembly);
+builder.Logging.ConfigureLogging(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
-
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
 
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"] ?? string.Empty))
-        };
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                context.Token = context.Request.Cookies["jwt"];
-                return Task.CompletedTask;
-            }
-        };
-    });
-
-var jwtSettings = new JwtSettings
-{
-    Key = builder.Configuration["Jwt:SecretKey"],
-    Issuer = builder.Configuration["Jwt:Issuer"],
-    Audience = builder.Configuration["Jwt:Audience"],
-    ExpirationMinutes = 30
-};
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("EditingTeacherPolicy", policy =>
-        policy.RequireRole("editingteacher"));
-    
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-});
-
-builder.Services.AddSingleton(jwtSettings);
-
+builder.Services.AddDatabaseServices(builder.Configuration);
+builder.Services.AddCustomMediatR();
+builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddMoodleServices(builder.Configuration);
+builder.Services.AddJwtTokenServices(builder.Configuration);
+builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddHttpClient();
-
-builder.Services.Configure<MoodleApiSettings>(builder.Configuration.GetSection("MoodleApi"));
-builder.Services.AddSingleton<MoodleApiClient>(); 
-
-builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-builder.Services.AddScoped<IJwtTokenHandler, JwtTokenHandler>();
-builder.Services.AddScoped<IMoodleService, MoodleService>();
-builder.Services.AddScoped<VariantServices>();
-
-builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
-builder.Services.AddTransient<IEmailService, EmailService>();
-
-builder.Services.AddSingleton<IAppSettingsService, AppSettingsService>();
-builder.Services.AddSingleton<AppSettingsBuilder>();
 
 var app = builder.Build();
 
@@ -135,24 +27,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseStatusCodePages(async context =>
-{
-    if (context.HttpContext.Response.StatusCode == 401)
-    {
-        var returnUrl = context.HttpContext.Request.Path;
-        context.HttpContext.Response.Redirect($"/Auth/Login?returnUrl={Uri.EscapeDataString(returnUrl)}");
-    }
-    else if (context.HttpContext.Response.StatusCode == 403)
-    {
-        context.HttpContext.Response.Redirect("/Home/AccessDenied");
-    }
-});
+app.UseCustomStatusCodePages();
+app.UseErrorHandling();
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
 app.UseSession();
-
 app.UseAuthentication();
 app.UseAuthorization();
 

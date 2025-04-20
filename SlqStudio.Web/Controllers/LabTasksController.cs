@@ -9,112 +9,140 @@ using SlqStudio.Application.Services.VariantServices;
 
 namespace SlqStudio.Controllers;
 
-//[Authorize(Roles = "editingteacher")]
-public class LabTasksController : Controller
+public class LabTasksController : BaseMvcController
 {
-        private readonly IMediator _mediator;
-        private readonly VariantServices _variantServices;
-        public LabTasksController(IMediator mediator, VariantServices variantServices)
+    private readonly IMediator _mediator;
+    private readonly VariantServices _variantServices;
+
+    public LabTasksController(ILogger<LabTasksController> logger, IMediator mediator, VariantServices variantServices)
+        : base(logger)
+    {
+        _mediator = mediator;
+        _variantServices = variantServices;
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        LogInfo("Загрузка списка всех заданий");
+        var tasks = await _mediator.Send(new GetAllTasksQuery());
+        return View(tasks);
+    }
+
+    [Authorize(Roles = "editingteacher")]
+    public async Task<IActionResult> Details(int id)
+    {
+        LogInfo($"Детали задания ID: {id}");
+        var taskItem = await _mediator.Send(new GetTaskByIdQuery(id));
+        if (taskItem == null)
         {
-            _mediator = mediator;
-            _variantServices = variantServices;
+            LogWarning($"Задание с ID {id} не найдено");
+            return NotFound();
+        }
+        return View(taskItem);
+    }
+
+    public async Task<IActionResult> DetailsByWork(int id)
+    {
+        LogInfo($"Генерация варианта по работе ID: {id}");
+        var labWorkItem = await _mediator.Send(new GetLabWorkByIdQuery(id));
+        if (labWorkItem == null)
+        {
+            LogWarning($"Лабораторная работа с ID {id} не найдена");
+            return NotFound();
         }
 
-        // GET: /LabTasks
-        public async Task<IActionResult> Index()
-        {
-            var tasks = await _mediator.Send(new GetAllTasksQuery());
-            return View(tasks);
-        }
-        
-        
-        [Authorize(Roles = "editingteacher")]
-        public async Task<IActionResult> Details(int id)
-        {
-            var taskItem = await _mediator.Send(new GetTaskByIdQuery(id));
-            if (taskItem == null)
-                return NotFound();
-            return View(taskItem);
-        }
-        
-        public async Task<IActionResult> DetailsByWork(int id)
-        {
-            var labWorkItem = await _mediator.Send(new GetLabWorkByIdQuery(id));
-            if (labWorkItem == null)
-                return NotFound();
-            return View(_variantServices.GenerateVariant(labWorkItem.Tasks.ToList(), HttpContext.Session.GetString("UserEmail")));
-        }
+        var email = HttpContext.Session.GetString("UserEmail");
+        return View(_variantServices.GenerateVariant(labWorkItem.Tasks.ToList(), email));
+    }
 
-        
-        [Authorize(Roles = "editingteacher")]
-        public async Task<IActionResult> Create()
+    [Authorize(Roles = "editingteacher")]
+    public async Task<IActionResult> Create()
+    {
+        LogInfo("Открытие формы создания задания");
+        var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
+        ViewBag.LabWorks = new SelectList(labWorks, "Id", "Name");
+        return View();
+    }
+
+    [Authorize(Roles = "editingteacher")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(CreateTaskCommand command)
+    {
+        if (ModelState.IsValid)
         {
-            var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
-            ViewBag.LabWorks = new SelectList(labWorks, "Id", "Name");
-            return View();
-        }
-
-        [Authorize(Roles = "editingteacher")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateTaskCommand command)
-        {
-            if (ModelState.IsValid)
-            {
-                await _mediator.Send(command);
-                return RedirectToAction(nameof(Index));
-            }
-            var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
-            ViewBag.LabWorks = new SelectList(labWorks, "Id", "Name");
-            return View(command);
-        }
-
-        [Authorize(Roles = "editingteacher")]
-        public async Task<IActionResult> Edit(int id)
-        {
-            var taskItem = await _mediator.Send(new GetTaskByIdQuery(id));
-            if (taskItem == null)
-                return NotFound();
-
-            var command = new UpdateTaskCommand(taskItem.Id, taskItem.Number, taskItem.Title, taskItem.Condition, taskItem.SolutionExample, taskItem.LabWorkId);
-            var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
-            ViewBag.LabWorks = new SelectList(labWorks, "Id", "Name", taskItem.LabWorkId);
-            return View(command);
-        }
-
-        [Authorize(Roles = "editingteacher")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, UpdateTaskCommand command)
-        {
-            if (id != command.Id)
-                return BadRequest();
-
-            if (ModelState.IsValid)
-            {
-                await _mediator.Send(command);
-                return RedirectToAction(nameof(Index));
-            }
-            var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
-            ViewBag.LabWorks = new SelectList(labWorks, "Id", "Name");
-            return View(command);
-        }
-
-        [Authorize(Roles = "editingteacher")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var taskItem = await _mediator.Send(new GetTaskByIdQuery(id));
-            if (taskItem == null)
-                return NotFound();
-            return View(taskItem);
-        }
-
-        [Authorize(Roles = "editingteacher")]
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            await _mediator.Send(new DeleteTaskCommand(id));
+            LogInfo("Создание нового задания", command);
+            await _mediator.Send(command);
             return RedirectToAction(nameof(Index));
         }
+
+        LogWarning("Модель недействительна при создании задания", ModelState);
+        var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
+        ViewBag.LabWorks = new SelectList(labWorks, "Id", "Name");
+        return View(command);
+    }
+
+    [Authorize(Roles = "editingteacher")]
+    public async Task<IActionResult> Edit(int id)
+    {
+        LogInfo($"Открытие формы редактирования задания ID: {id}");
+        var taskItem = await _mediator.Send(new GetTaskByIdQuery(id));
+        if (taskItem == null)
+        {
+            LogWarning($"Задание с ID {id} не найдено для редактирования");
+            return NotFound();
+        }
+
+        var command = new UpdateTaskCommand(taskItem.Id, taskItem.Number, taskItem.Title, taskItem.Condition, taskItem.SolutionExample, taskItem.LabWorkId);
+        var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
+        ViewBag.LabWorks = new SelectList(labWorks, "Id", "Name", taskItem.LabWorkId);
+        return View(command);
+    }
+
+    [Authorize(Roles = "editingteacher")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, UpdateTaskCommand command)
+    {
+        if (id != command.Id)
+        {
+            LogWarning($"Несовпадение ID при редактировании: путь ID = {id}, тело ID = {command.Id}");
+            return BadRequest();
+        }
+
+        if (ModelState.IsValid)
+        {
+            LogInfo($"Обновление задания ID: {id}", command);
+            await _mediator.Send(command);
+            return RedirectToAction(nameof(Index));
+        }
+
+        LogWarning("Модель недействительна при редактировании задания", ModelState);
+        var labWorks = await _mediator.Send(new GetAllLabWorksQuery());
+        ViewBag.LabWorks = new SelectList(labWorks, "Id", "Name");
+        return View(command);
+    }
+
+    [Authorize(Roles = "editingteacher")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        LogInfo($"Запрос на удаление задания ID: {id}");
+        var taskItem = await _mediator.Send(new GetTaskByIdQuery(id));
+        if (taskItem == null)
+        {
+            LogWarning($"Задание с ID {id} не найдено для удаления");
+            return NotFound();
+        }
+        return View(taskItem);
+    }
+
+    [Authorize(Roles = "editingteacher")]
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        LogInfo($"Подтверждено удаление задания ID: {id}");
+        await _mediator.Send(new DeleteTaskCommand(id));
+        return RedirectToAction(nameof(Index));
+    }
 }

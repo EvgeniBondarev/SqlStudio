@@ -1,25 +1,93 @@
 ﻿@model ErrorViewModel
 @{
-    ViewData["Title"] = "Error";
+ViewData["Title"] = "Ошибка";
+Layout = null; // Используйте ваш основной layout
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            background-color: #f5f5f5;
+        }
+        main {
+            flex: 1 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .error-card {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        .error-icon {
+            font-size: 5rem;
+            color: #e53935;
+            margin-bottom: 1.5rem;
+        }
+        .error-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #e53935;
+        }
+        .error-text {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #616161;
+        }
+        .error-request-id {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: #455a64;
+        }
+        .btn-home {
+            margin-top: 1.5rem;
+            background-color: #3949ab !important;
+        }
+        .btn-home:hover {
+            background-color: #303f9f !important;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <div class="container">
+        <div class="card error-card">
+            <div class="card-content">
+                <i class="material-icons error-icon">error_outline</i>
+                <h1 class="error-title">Ошибка</h1>
+                <h2 class="error-text">Произошла ошибка при обработке вашего запроса.</h2>
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
+                @if (Model.ShowRequestId)
+                {
+                    <p class="error-request-id">
+                        <strong>Идентификатор запроса:</strong> <code>@Model.RequestId</code>
+                    </p>
+                }
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+                <a href="@Url.Action("Index", "Home")" class="btn waves-effect waves-light btn-home">
+                    <i class="material-icons left">home</i> Перейти на главную
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Materialize JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
