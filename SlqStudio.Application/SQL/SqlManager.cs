@@ -1,4 +1,5 @@
-﻿using Application.Common.SQL.ResponseModels;
+﻿using System.Data;
+using Application.Common.SQL.ResponseModels;
 using Application.Common.SQL.Utils;
 using Dapper;
 using Microsoft.Data.SqlClient;
@@ -87,7 +88,65 @@ namespace Application.Common.SQL
 
             return results;
         }
+        
+        
+        public async Task<(List<Dictionary<string, object>> Rows, List<string> Columns)> ExecuteQueryWithMetadataAsync(string sql)
+        {
+            var sqlCommands = sql.Split(new[] { "GO" }, StringSplitOptions.RemoveEmptyEntries)
+                                 .Select(command => command.Trim())
+                                 .Where(command => !string.IsNullOrEmpty(command))
+                                 .ToList();
 
+            var rows = new List<Dictionary<string, object>>();
+            var columnNames = new List<string>();
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var transaction = await connection.BeginTransactionAsync();
+
+                try
+                {
+                    foreach (var command in sqlCommands)
+                    {
+                        using (var cmd = new SqlCommand(command, connection, (SqlTransaction)transaction))
+                        {
+                            using (var reader = await cmd.ExecuteReaderAsync())
+                            {
+                                var schema = reader.GetSchemaTable();
+                                if (schema != null && schema.Rows.Count > 0 && columnNames.Count == 0)
+                                {
+                                    foreach (DataRow row in schema.Rows)
+                                    {
+                                        columnNames.Add(row["ColumnName"].ToString());
+                                    }
+                                }
+
+                                while (await reader.ReadAsync())
+                                {
+                                    var row = new Dictionary<string, object>();
+                                    for (int i = 0; i < reader.FieldCount; i++)
+                                    {
+                                        row[reader.GetName(i)] = reader.GetValue(i);
+                                    }
+                                    rows.Add(row);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Ошибка выполнения SQL команды: " + ex.Message, ex);
+                }
+                finally
+                {
+                    await transaction.RollbackAsync();
+                }
+            }
+
+            return (rows, columnNames);
+        }
 
     }
 }

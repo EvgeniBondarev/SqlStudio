@@ -1,5 +1,6 @@
 ﻿using Application.Common.SQL;
 using Application.Common.SQL.ResponseModels;
+using Application.Common.SQL.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SlqStudio.Application.CQRS.LabTask.Queries;
@@ -60,11 +61,19 @@ public class SolutionController : Controller
         if (task == null)
             return NotFound($"Задача с ID {request.TaskId} не найдена.");
 
+        var expectedType = SqlCommandTypeDetector.Detect(task.SolutionExample);
+        var actualType = SqlCommandTypeDetector.Detect(request.SqlQuery);
+
+        if (expectedType != actualType)
+        {
+            return BadRequest($"Тип запроса не соответствует ожидаемому. Ожидался: {expectedType}, получен: {actualType}.");
+        }
+
         var response = await _sqlManager.CompareSqlResultsAsync(task.SolutionExample, request.SqlQuery);
 
         if (response == null)
             return BadRequest("Ошибка сравнения данных SQL.");
-        
+
         UpdateComparisonResultsInSession(request.TaskId, response.DataIsEqual, request.SqlQuery);
 
         return Ok(response);

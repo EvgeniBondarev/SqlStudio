@@ -330,7 +330,6 @@ SELECT * FROM dbo.GetLabCount();
         // Показываем индикатор загрузки
         showAlertMessage('info', 'Выполнение запроса...');
 
-        // Отправка запроса
         fetch("http://localhost:5051/Solution/ValidateSqlSyntax", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -349,8 +348,16 @@ SELECT * FROM dbo.GetLabCount();
                     displayErrorResult(validateResponse.error);
                     throw new Error("Invalid SQL");
                 }
+})
+            .then(async response => {
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    showAlertMessage(false, errorText);
+                    displayErrorResult(errorText);
+                    throw new Error(errorText);
+                }
+                return response.json();
             })
-            .then(response => response.json())
             .then(compareResponse => {
                 if (compareResponse.dataIsEqual) {
                     showAlertMessage(true, "Ответ верный!");
