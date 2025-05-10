@@ -2,6 +2,7 @@
 using SlqStudio.Application.Services.EmailService;
 using SlqStudio.Application.Services.EmailService.Implementation;
 using SlqStudio.Application.Services.EmailService.Models;
+using SlqStudio.Application.Services.LogFileServices;
 using SlqStudio.Application.Services.VariantServices;
 
 namespace SlqStudio.Extensions;
@@ -17,5 +18,7 @@ public static class ApplicationServicesExtensions
 
         services.AddSingleton<IAppSettingsService, AppSettingsService>();
         services.AddSingleton<AppSettingsBuilder>();
+        
+        services.AddScoped<ILogFileService, LogFileService>();
     }
 }

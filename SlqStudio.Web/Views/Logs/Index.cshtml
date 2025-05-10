@@ -1,0 +1,146 @@
+﻿@model SlqStudio.ViewModel.Log.LogFileListViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Логи системы";
+}
+
+<main class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+
+                    <div class="divider" style="margin: 20px 0;"></div>
+
+                    @if (Model.Files.Count == 0)
+                    {
+                        <p>Лог-файлы не найдены.</p>
+                    }
+                    else
+                    {
+                        <div class="responsive-table-container">
+                            <table class="highlight striped">
+                                <thead class="light-blue lighten-2 white-text">
+                                    <tr>
+                                        <th><i class="material-icons">description</i> Имя файла</th>
+                                        <th><i class="material-icons">sd_storage</i> Размер</th>
+                                        <th><i class="material-icons">event</i> Последнее изменение</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var file in Model.Files)
+                                    {
+                                        <tr>
+                                            <td>@file.FileName</td>
+                                            <td>@(file.FileSize / 1024) KB</td>
+                                            <td>@file.LastModified.ToString("g")</td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <a asp-action="ViewFile" asp-route-fileName="@file.FileName"
+                                                       class="btn-floating waves-effect waves-light blue tooltipped"
+                                                       data-position="top" data-tooltip="Просмотр">
+                                                        <i class="material-icons">visibility</i>
+                                                    </a>
+                                                    <a asp-action="Download" asp-route-fileName="@file.FileName"
+                                                       class="btn-floating waves-effect waves-light green tooltipped"
+                                                       data-position="top" data-tooltip="Скачать">
+                                                        <i class="material-icons">file_download</i>
+                                                    </a>
+                                                    <form asp-action="Delete" asp-route-fileName="@file.FileName" method="post" 
+                                                          onsubmit="return confirm('Удалить лог @file.FileName?');"
+                                                          style="display:inline;">
+                                                        <button type="submit"
+                                                                class="btn-floating waves-effect waves-light red tooltipped"
+                                                                data-position="top" data-tooltip="Удалить">
+                                                            <i class="material-icons">delete</i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <ul class="pagination center-align">
+                            @if (Model.CurrentPage > 1)
+                            {
+                                <li class="waves-effect">
+                                    <a href="@Url.Action("Index", new { page = 1 })">1</a>
+                                </li>
+                                @if (Model.CurrentPage > 3)
+                                {
+                                    <li class="disabled"><span>...</span></li>
+                                }
+                            }
+
+                            @{
+                                int startPage = Math.Max(2, Model.CurrentPage - 2);
+                                int endPage = Math.Min(Model.TotalPages - 1, Model.CurrentPage + 2);
+        
+                                for (int i = startPage; i <= endPage; i++)
+                                {
+                                    if (i != 1 && i != Model.TotalPages) 
+                                    {
+                                        <li class="waves-effect @(i == Model.CurrentPage ? "active" : "")">
+                                            <a href="@Url.Action("Index", new { page = i })">@i</a>
+                                        </li>
+                                    }
+                                }
+                            }
+
+                            @if (Model.CurrentPage < Model.TotalPages)
+                            {
+                                @if (Model.CurrentPage < Model.TotalPages - 2)
+                                {
+                                    <li class="disabled"><span>...</span></li>
+                                }
+                                <li class="waves-effect">
+                                    <a href="@Url.Action("Index", new { page = Model.TotalPages })">@Model.TotalPages</a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .responsive-table-container {
+        overflow-x: auto;
+        margin: 20px 0;
+    }
+
+    table.highlight tbody tr:hover {
+        background-color: #e1f5fe !important;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn-floating {
+        margin: 0 4px;
+    }
+
+    th i.material-icons {
+        vertical-align: bottom;
+        margin-right: 8px;
+        font-size: 1.2rem;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltips = document.querySelectorAll('.tooltipped');
+            M.Tooltip.init(tooltips);
+        });
+    </script>
+}

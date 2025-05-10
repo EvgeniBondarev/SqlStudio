@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Просмотр лога";
+}
+
+<main class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="row valign-wrapper" style="margin-bottom: 0;">
+                        <div class="col s8">
+                            <span class="card-title">
+                                <i class="material-icons left">article</i>Просмотр файла: @ViewBag.FileName
+                            </span>
+                        </div>
+                        <div class="col s4 right-align">
+                            <a asp-action="Index" class="btn waves-effect grey lighten-1">
+                                <i class="material-icons left">arrow_back</i>Назад
+                            </a>
+                            <a asp-action="Download" asp-route-fileName="@ViewBag.FileName"
+                               class="btn waves-effect green lighten-1">
+                                <i class="material-icons left">file_download</i>Скачать
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="divider" style="margin: 20px 0;"></div>
+
+                    <div class="row">
+                        <div class="col s12">
+                            <pre style="background-color:#f8f9fa; padding: 1rem; border: 1px solid #ccc; max-height: 600px; overflow-y: auto; white-space: pre-wrap;">
+@ViewBag.Content
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            M.AutoInit(); // инициализация компонентов Materialize
+        });
+    </script>
+}
