@@ -49,7 +49,16 @@ public class SolutionController : BaseMvcController
             }
 
             LabTaskViewModel labTaskViewModel = task.ToViewModel();
-            labTaskViewModel.QueryData = await _sqlManager.ExecuteQueryAsync(task.SolutionExample);
+            bool hasTrigger = task.SolutionExample.IndexOf("CREATE TRIGGER", StringComparison.OrdinalIgnoreCase) >= 0;
+            if (hasTrigger)
+            {
+                labTaskViewModel.QueryData = await _sqlManager.ExecuteQueryWithTriggerMessagesAndRollbackAsync(task.SolutionExample);
+            }
+            else
+            {
+                labTaskViewModel.QueryData = await _sqlManager.ExecuteQueryAsync(task.SolutionExample);
+            }
+            
             LogInfo($"Задание с ID {taskId} успешно отображено.");
             return View(labTaskViewModel);
         }

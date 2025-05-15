@@ -107,7 +107,7 @@ namespace SlqStudio.Controllers
                 Response.Cookies.Append("jwt", tokenString, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true,
+                    Secure = false, // разрешает отправку куки по HTTP
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.UtcNow.AddMinutes(30)
                 });

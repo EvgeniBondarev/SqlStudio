@@ -330,7 +330,7 @@ SELECT * FROM dbo.GetLabCount();
         // Показываем индикатор загрузки
         showAlertMessage('info', 'Выполнение запроса...');
 
-        fetch("http://localhost:5051/Solution/ValidateSqlSyntax", {
+        fetch("/Solution/ValidateSqlSyntax", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ sqlQuery: query })
@@ -338,7 +338,7 @@ SELECT * FROM dbo.GetLabCount();
             .then(response => response.json())
             .then(validateResponse => {
                 if (validateResponse.isValid) {
-                    return fetch("http://localhost:5051/Solution/CompareSql", {
+                    return fetch("/Solution/CompareSql", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ taskId: taskId, sqlQuery: query })
