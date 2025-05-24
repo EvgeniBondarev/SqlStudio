@@ -122,7 +122,6 @@ public class SqlManager
     public async Task<List<Dictionary<string, object>>> ExecuteQueryWithTriggerMessagesAndRollbackAsync(string sql)
     {
         var messagesWithTypes = new List<Dictionary<string, object>>();
-
         var sqlCommands = sql.Split(new[] { "\nGO", "\r\nGO" }, StringSplitOptions.RemoveEmptyEntries)
                              .Select(command => command.Trim())
                              .Where(command => !string.IsNullOrWhiteSpace(command))
@@ -131,12 +130,13 @@ public class SqlManager
         using (var connection = new SqlConnection(_connectionString))
         {
             var collectedMessages = new List<(string Message, string QueryType)>();
+            string currentQueryType = "UNKNOWN";
 
             connection.InfoMessage += (sender, e) =>
             {
                 foreach (SqlError info in e.Errors)
                 {
-                    collectedMessages.Add((info.Message, null));
+                    collectedMessages.Add((info.Message, currentQueryType)); // сохраняем тип запроса
                 }
             };
 
@@ -147,21 +147,17 @@ public class SqlManager
             {
                 foreach (var command in sqlCommands)
                 {
-                    string queryType = GetQueryTypeWithTable(command);
+                    currentQueryType = GetSqlOperationAndTable(command);
                     collectedMessages.Clear();
 
                     using var cmd = new SqlCommand(command, connection, transaction);
-
                     await cmd.ExecuteNonQueryAsync();
 
-                    foreach (var (message, _) in collectedMessages)
+                    foreach (var (message, type) in collectedMessages)
                     {
                         messagesWithTypes.Add(new Dictionary<string, object>
                         {
-                            [message] = new {
-                                QueryType = queryType,
-                                Message = message
-                            }
+                            {type, message}
                         });
                     }
                 }
@@ -178,66 +174,56 @@ public class SqlManager
         return messagesWithTypes;
     }
 
-    private string GetQueryTypeWithTable(string sqlCommand)
+
+    public string GetSqlOperationAndTable(string sqlQuery)
     {
-        if (string.IsNullOrWhiteSpace(sqlCommand))
-            return "UNKNOWN";
+        if (string.IsNullOrWhiteSpace(sqlQuery))
+            return null;
 
-        var words = sqlCommand.Split(new[] { ' ', '\t', '\r', '\n', '(', ';' }, StringSplitOptions.RemoveEmptyEntries);
+        sqlQuery = sqlQuery.Trim();
 
-        if (words.Length == 0)
-            return "UNKNOWN";
+        // Приводим к верхнему регистру для упрощения поиска
+        string upperSql = sqlQuery.ToUpper();
 
-        string type = words[0].ToUpperInvariant();
+        string operation = null;
+        string tableName = null;
 
-        if (type == "INSERT")
+        if (upperSql.StartsWith("INSERT INTO"))
         {
-            if (words.Length > 2 && words[1].Equals("INTO", StringComparison.OrdinalIgnoreCase))
-            {
-                string tableName = words[2];
-                return $"{type}_{tableName}";
-            }
+            operation = "INSERT";
+            tableName = ExtractTableName(sqlQuery, "INSERT INTO");
         }
-        else if (type == "UPDATE")
+        else if (upperSql.StartsWith("UPDATE"))
         {
-            if (words.Length > 1)
-            {
-                string tableName = words[1];
-                return $"{type}_{tableName}";
-            }
+            operation = "UPDATE";
+            tableName = ExtractTableName(sqlQuery, "UPDATE");
         }
-        else if (type == "DELETE")
+        else if (upperSql.StartsWith("DELETE FROM"))
         {
-            if (words.Length > 2 && words[1].Equals("FROM", StringComparison.OrdinalIgnoreCase))
-            {
-                string tableName = words[2];
-                return $"{type}_{tableName}";
-            }
+            operation = "DELETE";
+            tableName = ExtractTableName(sqlQuery, "DELETE FROM");
         }
-        else if (type == "CREATE")
+        else if (upperSql.StartsWith("SELECT"))
         {
-            if (words.Length > 2 && words[1].Equals("TABLE", StringComparison.OrdinalIgnoreCase))
-            {
-                string tableName = words[2];
-                return $"{type}_TABLE_{tableName}";
-            }
-            if (words.Length > 2 && words[1].Equals("TRIGGER", StringComparison.OrdinalIgnoreCase))
-            {
-                string triggerName = words[2];
-                return $"{type}_TRIGGER_{triggerName}";
-            }
-        }
-        else if (type == "ALTER")
-        {
-            if (words.Length > 2 && words[1].Equals("TABLE", StringComparison.OrdinalIgnoreCase))
-            {
-                string tableName = words[2];
-                return $"{type}_TABLE_{tableName}";
-            }
+            operation = "SELECT";
+            tableName = ExtractTableName(sqlQuery, "FROM");
         }
 
-        return type;
+        return operation != null && tableName != null ? $"{operation}_{tableName}" : null;
     }
 
-    
+    private static string ExtractTableName(string sqlQuery, string keyword)
+    {
+        int keywordIndex = sqlQuery.IndexOf(keyword, StringComparison.OrdinalIgnoreCase);
+        if (keywordIndex == -1)
+            return null;
+
+        string afterKeyword = sqlQuery.Substring(keywordIndex + keyword.Length).Trim();
+
+        // Удаляем возможные скобки, если они есть (например, INSERT INTO Students (...) )
+        string[] parts = afterKeyword.Split(new[] { ' ', '(', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
+        return parts.Length > 0 ? parts[0] : null;
+    }
+
 }
