@@ -112,7 +112,7 @@ public class SqlManager
             }
             finally
             {
-                await transaction.RollbackAsync(); // гарантированный откат
+                await transaction.RollbackAsync(); 
             }
         }
 

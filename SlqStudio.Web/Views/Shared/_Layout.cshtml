@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var userEmail = Context.Session.GetString("UserEmail");
+    var userRole = Context.Session.GetString("UserRole");
+    var userName = Context.Session.GetString("UserName");
+    var isAdmin = userRole == "EditingTeacher";
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -100,12 +107,20 @@
             background: #9e9e9e;
         }
 
+        #main-sidenav.hide {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
     </style>
 </head>
 <body>
 <header>
     <nav class="light-blue darken-3">
         <div class="nav-wrapper">
+            <a href="#" id="toggle-sidenav" class="sidenav-trigger show-on-large" style="margin-right: 15px;">
+                <i class="material-icons">menu</i>
+            </a>
             <a href="/" class="brand-logo">SlqStudio.Web</a>
             <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             <ul class="right hide-on-med-and-down">
@@ -133,6 +148,91 @@
     </ul>
 </header>
 
+<!-- Main Sidenav -->
+<ul id="main-sidenav" class="sidenav">
+    <li class="user-view">
+        <div class="background light-blue darken-3"></div>
+        @if (!string.IsNullOrEmpty(userName))
+        {
+            <div class="user-info">
+                <div class="chip light-blue lighten-2 white-text">
+                    <i class="material-icons tiny">account_circle</i>
+                    @userName
+                </div>
+                <div class="chip light-blue lighten-1 white-text" style="margin-top: 10px;">
+                    <i class="material-icons tiny">email</i>
+                    @userEmail
+                </div>
+                <div class="chip light-blue darken-1 white-text" style="margin-top: 10px;">
+                    <i class="material-icons tiny">security</i>
+                    @userRole
+                </div>
+            </div>
+        }
+    </li>
+    
+    <li><div class="divider"></div></li>
+    
+    <!-- Основные разделы для всех пользователей -->
+    <li class="collection-item">
+        <a href="/LabWorks/LabList" class="waves-effect">
+            <i class="material-icons light-blue-text">school</i>
+            Изучение SQL
+        </a>
+    </li>
+    <li class="collection-item">
+        <a href="https://github.com/EvgeniBondarev/SqlStudio" target="_blank" class="waves-effect">
+            <i class="material-icons light-blue-text">code</i>
+            О проекте (GitHub)
+        </a>
+    </li>
+    
+    <!-- Разделы только для администратора -->
+    @if (isAdmin)
+    {
+        <li><div class="divider"></div></li>
+        <li class="admin-title">Администрирование</li>
+        
+        <li class="collection-item admin-section">
+            <a href="/LabWorks/Create" class="waves-effect">
+                <i class="material-icons teal-text">add</i>
+                Создать лабораторную работу
+            </a>
+        </li>
+        <li class="collection-item admin-section">
+            <a href="/LabWorks/Index" class="waves-effect">
+                <i class="material-icons teal-text">list</i>
+                Список лабораторных работ
+            </a>
+        </li>
+        <li class="collection-item admin-section">
+            <a href="/LabTasks/Create" class="waves-effect">
+                <i class="material-icons teal-text">add</i>
+                Создать задание
+            </a>
+        </li>
+        <li class="collection-item admin-section">
+            <a href="/LabTasks/Index" class="waves-effect">
+                <i class="material-icons teal-text">list</i>
+                Список заданий
+            </a>
+        </li>
+        <li class="collection-item admin-section">
+            <a href="/Config/EditConfig" class="waves-effect">
+                <i class="material-icons teal-text">settings</i>
+                Настройки конфигурации
+            </a>
+        </li>
+        <li class="collection-item admin-section">
+            <a href="/Logs/Index" class="waves-effect">
+                <i class="material-icons teal-text">description</i>
+                Просмотр логов
+            </a>
+        </li>
+    }
+</ul>
+
+
 <main class="container">
     @RenderBody()
 </main>
@@ -154,6 +254,28 @@
         $('.sidenav').sidenav(); // Initialize mobile sidenav
     });
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Инициализация Materialize Sidenav
+        const sidenavElems = document.querySelectorAll('.sidenav');
+        const sidenavInstances = M.Sidenav.init(sidenavElems, {
+            edge: 'left',
+            draggable: true
+        });
+
+        // Обработчик на кнопку
+        const toggleButton = document.getElementById('toggle-sidenav');
+        if (toggleButton) {
+            toggleButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                const instance = M.Sidenav.getInstance(document.getElementById('main-sidenav'));
+                instance.open();
+            });
+        }
+    });
+</script>
+
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
