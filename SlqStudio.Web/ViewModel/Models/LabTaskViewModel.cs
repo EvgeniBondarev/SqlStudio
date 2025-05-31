@@ -8,4 +8,5 @@ public class LabTaskViewModel
     public string Condition { get; set; }
     public int LabWorkId { get; set; }
     public List<Dictionary<string, object>>? QueryData { get; set; }
+    public string DatabaseDiagram { get; set; }
 }

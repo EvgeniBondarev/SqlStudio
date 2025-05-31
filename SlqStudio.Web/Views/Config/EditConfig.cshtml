@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Редактирование конфигурации";
     Layout = "_Layout";
+    
+    // Получаем комментарии из конфигурации
+    var comments = Model["Comments"] as JObject;
 }
 
 <main class="container">
@@ -26,23 +29,65 @@
                     <form asp-action="SaveConfig" method="post">
                         @foreach (var configSection in Model.Properties())
                         {
+                            if (configSection.Name == "Comments") { continue; }
+
                             <div class="section mb-3">
-                                <h5 class="light-blue-text">@configSection.Name</h5>
+                                <div class="section-header valign-wrapper" style="align-items: flex-start;">
+                                    <h5 class="light-blue-text" style="margin-right: 10px; margin-bottom: 0;">@configSection.Name</h5>
+                                    @if (comments != null && comments[configSection.Name] != null)
+                                    {
+                                        <div class="section-comment grey-text text-darken-1" style="flex: 1; margin-top: 6px;">
+                                            <i class="material-icons tiny" style="vertical-align: middle; margin-right: 5px;">info_outline</i>
+                                            <span style="font-size: 0.9rem;">@comments[configSection.Name]</span>
+                                        </div>
+                                    }
+                                </div>
 
                                 @if (configSection.Value.Type == JTokenType.Object)
                                 {
                                     var obj = (JObject)configSection.Value;
                                     foreach (var subProp in obj.Properties())
                                     {
+                                        var fullKey = $"{configSection.Name}.{subProp.Name}";
                                         <div class="row">
                                             <div class="input-field col s12">
                                                 <label>@subProp.Name</label>
+                                                @if (comments != null && comments[fullKey] != null)
+                                                {
+                                                    <div class="comment grey-text text-darken-1" style="margin-bottom: 5px; font-size: 0.8rem;">
+                                                        <i class="material-icons tiny">info_outline</i> @comments[fullKey]
+                                                    </div>
+                                                }
                                                 <input type="text" 
-                                                       name="@configSection.Name.@subProp.Name" 
+                                                       name="@fullKey" 
                                                        value="@subProp.Value" 
                                                        class="validate" />
                                             </div>
                                         </div>
+                                        
+                                        if (subProp.Value.Type == JTokenType.Object)
+                                        {
+                                            var subObj = (JObject)subProp.Value;
+                                            foreach (var subSubProp in subObj.Properties())
+                                            {
+                                                var subFullKey = $"{fullKey}.{subSubProp.Name}";
+                                                <div class="row">
+                                                    <div class="input-field col s12">
+                                                        <label>@subSubProp.Name</label>
+                                                        @if (comments != null && comments[subFullKey] != null)
+                                                        {
+                                                            <div class="comment grey-text text-darken-1" style="margin-bottom: 5px; font-size: 0.8rem;">
+                                                                <i class="material-icons tiny">info_outline</i> @comments[subFullKey]
+                                                            </div>
+                                                        }
+                                                        <input type="text" 
+                                                               name="@subFullKey" 
+                                                               value="@subSubProp.Value" 
+                                                               class="validate" />
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
                                     }
                                 }
                                 else
@@ -50,6 +95,12 @@
                                     <div class="row">
                                         <div class="input-field col s12">
                                             <label>@configSection.Name</label>
+                                            @if (comments != null && comments[configSection.Name] != null)
+                                            {
+                                                <div class="comment grey-text text-darken-1" style="margin-bottom: 5px; font-size: 0.8rem;">
+                                                    <i class="material-icons tiny">info_outline</i> @comments[configSection.Name]
+                                                </div>
+                                            }
                                             <input type="text" 
                                                    name="@configSection.Name" 
                                                    value="@configSection.Value" 
@@ -91,13 +142,45 @@
         transform-origin: 0 0;
     }
 
-    .section h5 {
-        margin-top: 0;
+    .section-header {
+        display: flex;
         margin-bottom: 1.5rem;
+        gap: 10px;
+    }
+
+    .section-header h5 {
+        margin-top: 0;
+        white-space: nowrap;
+    }
+
+    .section-comment {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #616161;
+        line-height: 1.4;
+        padding-top: 2px;
+    }
+
+    .section-comment i {
+        margin-right: 5px;
+        font-size: 1.1rem;
+        flex-shrink: 0;
     }
 
     .btn {
         margin-left: 10px;
+    }
+
+    .comment {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 5px;
+    }
+
+    .comment i {
+        font-size: 1rem;
     }
 </style>
 

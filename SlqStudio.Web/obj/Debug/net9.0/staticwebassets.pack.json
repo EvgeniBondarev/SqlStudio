@@ -9,6 +9,10 @@
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
+      "Id": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\wwwroot\\diagrams\\students_payments_er_diagram.txt",
+      "PackagePath": "staticwebassets\\diagrams\\students_payments_er_diagram.txt"
+    },
+    {
       "Id": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
     },

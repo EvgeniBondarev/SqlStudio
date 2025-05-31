@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "HuEHhPykNk4FScQrSx5mWx7b+EEt38pELRm2HFXV5+8=",
+  "Hash": "klU8KbsBB35QovD9D5ZDACKdsbXYVvHsTviBxLmCOQw=",
   "Source": "SlqStudio.Web",
   "BasePath": "_content/SlqStudio.Web",
   "Mode": "Default",
@@ -141,6 +141,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map"
+    },
+    {
+      "Identity": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\obj\\Debug\\net9.0\\compressed\\30aehasnxw-qnkamh7yta.gz",
+      "SourceId": "SlqStudio.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/SlqStudio.Web",
+      "RelativePath": "diagrams/students_payments_er_diagram#[.{fingerprint=qnkamh7yta}]?.txt.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\wwwroot\\diagrams\\students_payments_er_diagram.txt",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "ohki031ds6",
+      "Integrity": "xIvmV2lJOhn/xl4K2bhUJDeeG7FiMentp1t5vLOA0BM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\wwwroot\\diagrams\\students_payments_er_diagram.txt"
     },
     {
       "Identity": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\obj\\Debug\\net9.0\\compressed\\3xkxr83209-gye83jo8yx.gz",
@@ -1422,6 +1443,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\site.css"
+    },
+    {
+      "Identity": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\wwwroot\\diagrams\\students_payments_er_diagram.txt",
+      "SourceId": "SlqStudio.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\wwwroot\\",
+      "BasePath": "_content/SlqStudio.Web",
+      "RelativePath": "diagrams/students_payments_er_diagram#[.{fingerprint}]?.txt",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "qnkamh7yta",
+      "Integrity": "FjGzh7YO5CVoXEdUy8mtF/m3QQiWxXHI5akDS5IxWD0=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\diagrams\\students_payments_er_diagram.txt"
     },
     {
       "Identity": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\wwwroot\\favicon.ico",
@@ -3022,6 +3064,304 @@
         {
           "Name": "integrity",
           "Value": "sha256-0FC1RbVkLkwKhJ1oi+r2Hw4Tm9av6DyJeo95YVvfA3Y="
+        }
+      ]
+    },
+    {
+      "Route": "diagrams/students_payments_er_diagram.qnkamh7yta.txt",
+      "AssetFile": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\obj\\Debug\\net9.0\\compressed\\30aehasnxw-qnkamh7yta.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.002739726027"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "364"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"xIvmV2lJOhn/xl4K2bhUJDeeG7FiMentp1t5vLOA0BM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 31 May 2025 13:30:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"FjGzh7YO5CVoXEdUy8mtF/m3QQiWxXHI5akDS5IxWD0=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "qnkamh7yta"
+        },
+        {
+          "Name": "label",
+          "Value": "diagrams/students_payments_er_diagram.txt"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-FjGzh7YO5CVoXEdUy8mtF/m3QQiWxXHI5akDS5IxWD0="
+        }
+      ]
+    },
+    {
+      "Route": "diagrams/students_payments_er_diagram.qnkamh7yta.txt",
+      "AssetFile": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\wwwroot\\diagrams\\students_payments_er_diagram.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1181"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"FjGzh7YO5CVoXEdUy8mtF/m3QQiWxXHI5akDS5IxWD0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 31 May 2025 13:30:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "qnkamh7yta"
+        },
+        {
+          "Name": "label",
+          "Value": "diagrams/students_payments_er_diagram.txt"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-FjGzh7YO5CVoXEdUy8mtF/m3QQiWxXHI5akDS5IxWD0="
+        }
+      ]
+    },
+    {
+      "Route": "diagrams/students_payments_er_diagram.qnkamh7yta.txt.gz",
+      "AssetFile": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\obj\\Debug\\net9.0\\compressed\\30aehasnxw-qnkamh7yta.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "364"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"xIvmV2lJOhn/xl4K2bhUJDeeG7FiMentp1t5vLOA0BM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 31 May 2025 13:30:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "qnkamh7yta"
+        },
+        {
+          "Name": "label",
+          "Value": "diagrams/students_payments_er_diagram.txt.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-xIvmV2lJOhn/xl4K2bhUJDeeG7FiMentp1t5vLOA0BM="
+        }
+      ]
+    },
+    {
+      "Route": "diagrams/students_payments_er_diagram.txt",
+      "AssetFile": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\obj\\Debug\\net9.0\\compressed\\30aehasnxw-qnkamh7yta.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.002739726027"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "364"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"xIvmV2lJOhn/xl4K2bhUJDeeG7FiMentp1t5vLOA0BM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 31 May 2025 13:30:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"FjGzh7YO5CVoXEdUy8mtF/m3QQiWxXHI5akDS5IxWD0=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-FjGzh7YO5CVoXEdUy8mtF/m3QQiWxXHI5akDS5IxWD0="
+        }
+      ]
+    },
+    {
+      "Route": "diagrams/students_payments_er_diagram.txt",
+      "AssetFile": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\wwwroot\\diagrams\\students_payments_er_diagram.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1181"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"FjGzh7YO5CVoXEdUy8mtF/m3QQiWxXHI5akDS5IxWD0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 31 May 2025 13:30:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-FjGzh7YO5CVoXEdUy8mtF/m3QQiWxXHI5akDS5IxWD0="
+        }
+      ]
+    },
+    {
+      "Route": "diagrams/students_payments_er_diagram.txt.gz",
+      "AssetFile": "D:\\.NETProject\\SlqStudio\\SlqStudio.Web\\obj\\Debug\\net9.0\\compressed\\30aehasnxw-qnkamh7yta.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "364"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"xIvmV2lJOhn/xl4K2bhUJDeeG7FiMentp1t5vLOA0BM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 31 May 2025 13:30:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-xIvmV2lJOhn/xl4K2bhUJDeeG7FiMentp1t5vLOA0BM="
         }
       ]
     },

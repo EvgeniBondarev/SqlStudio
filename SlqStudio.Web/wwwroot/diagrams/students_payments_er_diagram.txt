@@ -1,0 +1,58 @@
+﻿erDiagram
+    Towns ||--o{ Streets : has
+    Faculties ||--o{ Groups : has
+    Streets ||--o{ Students : lives_at
+    Groups ||--o{ Students : contains
+    Students ||--o{ Payments : makes
+    Purposes ||--o{ Payments : justifies
+
+    Towns {
+        int TownId PK
+        nvarchar Name
+    }
+
+    Streets {
+        int StreetId PK
+        nvarchar Name
+        int TownId FK
+    }
+
+    Faculties {
+        int FacultyId PK
+        nvarchar ShortName
+        nvarchar Name
+    }
+
+    Groups {
+        int GroupId PK
+        nvarchar GroupName
+        int FacultyId FK
+    }
+
+    Students {
+        int StudentId PK
+        nvarchar Surname
+        nvarchar Name
+        nvarchar MiddleName
+        int StreetId FK
+        smallint HouseNumber
+        smallint ApartmentNumber
+        bigint PhoneNumber
+        date BirthDate
+        smallint AdmissionYear
+        int GroupId FK
+        nvarchar Note
+    }
+
+    Purposes {
+        int PurposeId PK
+        nvarchar Name
+    }
+
+    Payments {
+        int PaymentId PK
+        int StudentId FK
+        date PaymentDate
+        decimal Amount
+        int PurposeId FK
+    }

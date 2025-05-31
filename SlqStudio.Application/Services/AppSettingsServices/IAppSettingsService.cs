@@ -6,4 +6,5 @@ public interface IAppSettingsService
 {
     JObject ReadConfig(string configPath);
     void WriteConfig(JObject config, string configPath);
+    JObject ReadComments();
 }

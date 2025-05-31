@@ -1,4 +1,6 @@
 ﻿using SlqStudio.Application.Services.AppSettingsServices;
+using SlqStudio.Application.Services.DiagramServices;
+using SlqStudio.Application.Services.DiagramServices.Implementation;
 using SlqStudio.Application.Services.EmailService;
 using SlqStudio.Application.Services.EmailService.Implementation;
 using SlqStudio.Application.Services.EmailService.Models;
@@ -20,5 +22,11 @@ public static class ApplicationServicesExtensions
         services.AddSingleton<AppSettingsBuilder>();
         
         services.AddScoped<ILogFileService, LogFileService>();
+        
+        services.Configure<DiagramSettings>(configuration.GetSection("DiagramSettings"));
+        services.AddScoped<IDiagramService, DiagramService>();
+       
+
+
     }
 }

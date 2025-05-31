@@ -3,7 +3,9 @@ using Application.Common.SQL.ResponseModels;
 using Application.Common.SQL.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using SlqStudio.Application.CQRS.LabTask.Queries;
+using SlqStudio.Application.Services.DiagramServices;
 using SlqStudio.Application.Services.VariantServices;
 using SlqStudio.Session;
 using SlqStudio.ViewModel.Mappers;
@@ -17,16 +19,23 @@ public class SolutionController : BaseMvcController
     private readonly IMediator _mediator;
     private readonly SqlManager _sqlManager;
     private readonly VariantServices _variantServices;
-
-    public SolutionController(IMediator mediator, 
-                              SqlManager sqlManager,
-                              VariantServices variantServices,
-                              ILogger<SolutionController> logger)
+    private readonly IDiagramService _diagramService;
+    private readonly string _diagramPath;
+    public SolutionController(
+        IMediator mediator,
+        SqlManager sqlManager,
+        VariantServices variantServices,
+        ILogger<SolutionController> logger,
+        IWebHostEnvironment env,
+        IOptions<DiagramSettings> diagramSettings,
+        IDiagramService diagramService)
         : base(logger)
     {
         _mediator = mediator;
         _sqlManager = sqlManager;
         _variantServices = variantServices;
+        _diagramPath = Path.Combine(env.WebRootPath, "diagrams", diagramSettings.Value.Name);
+        _diagramService = diagramService;
     }
 
     public async Task<IActionResult> Index(int taskId)
@@ -58,7 +67,9 @@ public class SolutionController : BaseMvcController
             {
                 labTaskViewModel.QueryData = await _sqlManager.ExecuteQueryAsync(task.SolutionExample);
             }
-            
+           
+            labTaskViewModel.DatabaseDiagram = await _diagramService.LoadDiagramAsync(_diagramPath);
+        
             LogInfo($"Задание с ID {taskId} успешно отображено.");
             return View(labTaskViewModel);
         }

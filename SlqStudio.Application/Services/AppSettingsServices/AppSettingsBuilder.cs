@@ -8,11 +8,20 @@ public class AppSettingsBuilder
     public JObject BuildAppSettings(IFormCollection form)
     {
         var updatedConfig = new JObject();
+        var comments = new JObject();
 
         foreach (var item in form)
         {
             if (item.Key == "__RequestVerificationToken")
                 continue;
+
+            // Сохраняем комментарии отдельно
+            if (item.Key.StartsWith("Comments."))
+            {
+                var commentKey = item.Key.Substring("Comments.".Length);
+                comments[commentKey] = item.Value.ToString();
+                continue;
+            }
 
             var keys = item.Key.Split('.');
             JToken current = updatedConfig;
@@ -39,6 +48,11 @@ public class AppSettingsBuilder
                     }
                 }
             }
+        }
+        
+        if (comments.HasValues)
+        {
+            updatedConfig["Comments"] = comments;
         }
 
         return updatedConfig;

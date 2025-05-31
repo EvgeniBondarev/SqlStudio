@@ -247,3 +247,5 @@ D:\.NETProject\SlqStudio\SlqStudio.Web\bin\Debug\net9.0\itext.commons.dll
 D:\.NETProject\SlqStudio\SlqStudio.Web\bin\Debug\net9.0\itextsharp.dll
 D:\.NETProject\SlqStudio\SlqStudio.Web\bin\Debug\net9.0\Microsoft.DotNet.PlatformAbstractions.dll
 D:\.NETProject\SlqStudio\SlqStudio.Web\bin\Debug\net9.0\appsettings.Production.json
+D:\.NETProject\SlqStudio\SlqStudio.Web\obj\Debug\net9.0\compressed\30aehasnxw-qnkamh7yta.gz
+D:\.NETProject\SlqStudio\SlqStudio.Web\bin\Debug\net9.0\appsettings-comments.json

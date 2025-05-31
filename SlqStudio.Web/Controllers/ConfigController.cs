@@ -68,6 +68,11 @@ public class ConfigController : BaseMvcController
         try
         {
             var jsonObj = _appSettingsService.ReadConfig(_appSettingsPath);
+            var comments = _appSettingsService.ReadComments();
+            
+            // Добавляем комментарии в основной объект для передачи в представление
+            jsonObj["Comments"] = comments;
+            
             return View(jsonObj);
         }
         catch (Exception ex)

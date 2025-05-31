@@ -174,6 +174,20 @@ Layout = "_Layout";
     }
 </style>
 
+<!-- Модальное окно для диаграммы -->
+<div id="diagram-modal" class="modal modal-fixed-footer" style="width: 50%; height: 90%; max-height: 90%;">
+    <div class="modal-content">
+        <h4>ER-диаграмма базы данных</h4>
+        <div class="mermaid">
+            @Model.DatabaseDiagram
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Закрыть</a>
+    </div>
+</div>
+
+
 <main>
     <div class="container">
         <div id="alert-container"></div>
@@ -187,6 +201,9 @@ Layout = "_Layout";
                         <div class="task-content markdown-body">
                             @Html.Raw(Model.Condition)
                         </div>
+                        <button id="show-diagram-btn" class="btn waves-effect waves-light blue">
+                            <i class="material-icons left">schema</i>Показать диаграмму БД
+                        </button>
                     </div>
                 </div>
             </div>
@@ -439,3 +456,32 @@ SELECT * FROM dbo.GetLabCount();
     });
 </script>
 }
+
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    
+    // Инициализация Mermaid
+    mermaid.initialize({ 
+        startOnLoad: false,
+        theme: 'default',
+        er: {
+            diagramPadding: 20,
+            layoutDirection: 'TB'
+        }
+    });
+
+    // Инициализация модального окна
+    document.addEventListener('DOMContentLoaded', function() {
+        var modal = M.Modal.init(document.getElementById('diagram-modal'), {
+            onOpenEnd: function() {
+                // Рендерим диаграмму при открытии модального окна
+                mermaid.init(undefined, '.mermaid');
+            }
+        });
+
+        // Обработчик кнопки для показа модального окна
+        document.getElementById('show-diagram-btn').addEventListener('click', function() {
+            modal.open();
+        });
+    });
+</script>
